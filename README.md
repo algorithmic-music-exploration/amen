@@ -1,2 +1,2 @@
 # amen
-A toolbox for algorithmic remixing,a fter Echo Nest Remix
+A toolbox for algorithmic remixing, after Echo Nest Remix.
