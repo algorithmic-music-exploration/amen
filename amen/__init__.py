@@ -4,4 +4,4 @@
 from .feature import Feature
 from .version import version as __version__
 
-__all__ = ['audio', 'Feature']
+__all__ = ['audio', 'Feature', 'utils']
