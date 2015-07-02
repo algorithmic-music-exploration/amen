@@ -1,8 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import amen.audio
+import librosa
+from amen.audio import Analysis
+from amen.utils import example_audio_file
 
-def test_audio():
-    analysis = amen.audio.Analysis('some_file_path.mp3')
-    assert(analysis)
+EXAMPLE_FILE = example_audio_file()
+analysis = Analysis(EXAMPLE_FILE)
+
+def test_default_sample_rate():
+    assert(analysis.sample_rate == 22050)
+
+def test_file_path():
+    assert(analysis.file_path == EXAMPLE_FILE)
+
+def test_sample_data():
+    y, sr = librosa.load(EXAMPLE_FILE)
+    assert(analysis.raw_samples.all() == y.all())
+
+def test_sample_rate():
+    analysis = Analysis(EXAMPLE_FILE, sample_rate=44100)
+    assert(analysis.sample_rate == 44100)
