@@ -11,6 +11,7 @@ setup(
     url='http://github.com/algorithmic-music-exploration/amen',
     download_url='http://github.com/algorithmic-music-exploration/amen/releases',
     packages=find_packages(),
+    package_data={'amen': ['examples/audio/*']},
     classifiers=[
         "License :: OSI Approved :: ISC License (ISCL)",
         "Programming Language :: Python",
