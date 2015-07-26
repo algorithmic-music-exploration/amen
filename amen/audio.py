@@ -21,4 +21,3 @@ class Audio(object):
         else:
             self.num_channels = 2
         self.duration = len(self.raw_samples) / self.sample_rate
-
