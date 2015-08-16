@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import librosa
-import six
 from amen.audio import Audio
 from amen.utils import example_audio_file
 
@@ -11,7 +10,7 @@ audio = Audio(EXAMPLE_FILE)
 mono_audio = Audio(EXAMPLE_FILE, convert_to_mono=True, sample_rate=44100)
 
 def test_default_sample_rate():
-    assert six.isinstance(audio.sample_rate, float)
+    assert isinstance(audio.sample_rate, float)
     assert(audio.sample_rate == 22050)
 
 def test_default_channels():
