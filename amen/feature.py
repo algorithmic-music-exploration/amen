@@ -12,7 +12,7 @@ class Feature(object):
 
     Handles indexing and time-slicing
     '''
-    def __init__(self, data, aggregate=np.mean):
+    def __init__(self, data, aggregate=np.mean, base=None):
         '''
         Parameters
         ----------
@@ -25,10 +25,15 @@ class Feature(object):
         '''
 
         # Check that the arguments have the right types
-        assert six.isinstance(data, pd.DataFrame)
+        assert isinstance(data, pd.DataFrame)
 
         self.data = data
         self.aggregate = aggregate
+
+        if base is not None:
+            assert isinstance(base, Feature)
+
+        self.base = base
 
     def at(self, time_slices):
         '''Resample the data at a new time slice index.
@@ -44,7 +49,10 @@ class Feature(object):
             The resampled feature data
         '''
 
-        if six.isinstance(time_slices, TimeSlice):
+        if self.base is not None:
+            return self.base.at(time_slices)
+
+        if isinstance(time_slices, TimeSlice):
             time_slices = [time_slices]
 
         # 0. join the time slice values
@@ -56,4 +64,4 @@ class Feature(object):
             timed_data.loc[sl.time] = self.aggregate(self.data[slice_index], axis=0)
 
         # 3. return the new feature object
-        return Feature(data=timed_data, aggregate=self.aggregate)
+        return Feature(data=timed_data, aggregate=self.aggregate, base=self)
