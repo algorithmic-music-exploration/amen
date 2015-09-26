@@ -6,7 +6,6 @@ import pandas as pd
 
 from .time import TimeSlice
 
-
 class Feature(object):
     '''Core feature container object.
 
@@ -65,3 +64,4 @@ class Feature(object):
 
         # 3. return the new feature object
         return Feature(data=timed_data, aggregate=self.aggregate, base=self)
+
