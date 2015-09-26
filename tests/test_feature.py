@@ -58,6 +58,9 @@ def test_default_aggregate():
 def test_default_base():
     assert(feature_at.base == test_feature)
 
+def test_default():
+    pass
+
 def test_with_base():
     pass
 
