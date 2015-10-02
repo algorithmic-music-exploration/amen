@@ -49,21 +49,37 @@ def test_base():
 def test_base_validation():
     assert_raises(AssertionError, Feature, test_dataframe, np.mean, [1, 2, 3])
 
+
 # Test at()
 time_slices = [TimeSlice(0, 0.5), TimeSlice(1, 0.5)]
 feature_at = test_feature.at(time_slices)
+
+test_slice = time_slices[0]
+slice_index = ((test_slice.time <= test_feature.data.index) &
+              (test_feature.data.index < test_slice.time + test_slice.duration))
+target_data = test_feature.aggregate(test_feature.data[slice_index], axis=0)
+
 def test_default_aggregate():
     assert(feature_at.aggregate == test_feature.aggregate)
 
 def test_default_base():
     assert(feature_at.base == test_feature)
 
-def test_default():
-    pass
+def test_default_data():
+    assert(feature_at.data.loc[test_slice.time].all() == target_data.all())
 
-def test_with_base():
-    pass
+def test_default_length():
+    assert(len(feature_at.data) == len(time_slices))
+
+def test_base_with_second_resample():
+    feature_again = feature_at.at(time_slices[0])
+    assert(feature_at.base == test_feature)
+
+def test_base_with_second_resample():
+    feature_again = feature_at.at(time_slices[0])
+    assert(feature_again.data.loc[test_slice.time].all() == target_data.all())
 
 def test_with_single_slice():
-    pass
+    feature_at = test_feature.at(time_slices[0])
+    assert(len(feature_at.data) == 1)
 
