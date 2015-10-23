@@ -6,7 +6,6 @@ import pandas as pd
 
 from .time import TimeSlice
 
-
 class Feature(object):
     '''Core feature container object.
 
@@ -55,13 +54,15 @@ class Feature(object):
         if isinstance(time_slices, TimeSlice):
             time_slices = [time_slices]
 
-        # 0. join the time slice values
+        # join the time slice values
         timed_data = pd.DataFrame(columns=self.data.columns)
 
+        # make the new data
         for sl in time_slices:
             slice_index = ((sl.time <= self.data.index) &
                            (self.data.index < sl.time + sl.duration))
             timed_data.loc[sl.time] = self.aggregate(self.data[slice_index], axis=0)
 
-        # 3. return the new feature object
+        # return the new feature object
         return Feature(data=timed_data, aggregate=self.aggregate, base=self)
+

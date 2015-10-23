@@ -18,3 +18,4 @@ class Audio(object):
         self.raw_samples = y
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
+
