@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import librosa
+import pandas as pd
+from amen.feature import Feature
 
 class Audio(object):
     """
@@ -18,4 +20,26 @@ class Audio(object):
         self.raw_samples = y
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
+        self.features = self.create_features()
+
+    def create_features(self):
+        features = {}
+        features['centroid'] = self.get_centroid()
+        return features
+
+    def get_centroid(self):
+        """
+        Gets spectral centroid data from librosa and loads it into a feature
+        """
+        hop_length = 512
+        mono_samples = librosa.to_mono(self.raw_samples)
+        centroid = librosa.feature.spectral_centroid(mono_samples, hop_length=hop_length)
+        centroid = centroid[0]
+
+        indexes = range(len(centroid))
+        indexes = [((hop_length * i) / self.sample_rate) for i in indexes]
+        indexes = pd.to_timedelta(indexes, unit='s')
+
+        data = pd.DataFrame(data=centroid, index=indexes)
+        return data
 
