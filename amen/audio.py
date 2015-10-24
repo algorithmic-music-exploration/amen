@@ -31,15 +31,14 @@ class Audio(object):
         """
         Gets spectral centroid data from librosa and loads it into a feature
         """
-        hop_length = 512
         mono_samples = librosa.to_mono(self.raw_samples)
-        centroid = librosa.feature.spectral_centroid(mono_samples, hop_length=hop_length)
+        centroid = librosa.feature.spectral_centroid(mono_samples)
         centroid = centroid[0]
 
-        indexes = range(len(centroid))
-        indexes = [((hop_length * i) / self.sample_rate) for i in indexes]
+        frame_numbers = range(len(centroid))
+        indexes = librosa.frames_to_time(frame_numbers)
         indexes = pd.to_timedelta(indexes, unit='s')
 
-        data = pd.DataFrame(data=centroid, index=indexes)
+        data = pd.DataFrame(data=centroid, index=indexes, columns=['spectral_centroid'])
         return data
 
