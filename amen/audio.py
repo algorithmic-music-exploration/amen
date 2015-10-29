@@ -36,14 +36,8 @@ class Audio(object):
         Gets spectral centroid data from librosa and loads it into a feature.
         """
         mono_samples = librosa.to_mono(self.raw_samples)
-        centroid = librosa.feature.spectral_centroid(mono_samples)
-        centroid = centroid[0]
-
-        frame_numbers = range(len(centroid))
-        indexes = librosa.frames_to_time(frame_numbers)
-        indexes = pd.to_timedelta(indexes, unit='s')
-
-        data = pd.DataFrame(data=centroid, index=indexes, columns=['spectral_centroid'])
+        centroids = librosa.feature.spectral_centroid(mono_samples)
+        data = self._convert_to_dataframe(centroids, ['spectral_centroid'])
         return data
 
     def get_amplitude(self):
@@ -52,12 +46,17 @@ class Audio(object):
         """
         mono_samples = librosa.to_mono(self.raw_samples)
         amplitudes = librosa.feature.rmse(mono_samples)
-        amplitudes = amplitudes[0]
-            
-        frame_numbers = range(len(amplitudes))
-        indexes = librosa.frames_to_time(frame_numbers)
-        indexes = pd.to_timedelta(indexes, unit='s')
+        data = self._convert_to_dataframe(amplitudes, ['amplitude'])
 
-        data = pd.DataFrame(data=amplitudes, index=indexes, columns=['amplitude'])
         return data
 
+    def _convert_to_dataframe(self, feature_data, columns):
+        """
+        Take feature data, convert to a pandas dataframe.
+        """
+        feature_data = feature_data[0]
+        frame_numbers = range(len(feature_data))
+        indexes = librosa.frames_to_time(frame_numbers)
+        indexes = pd.to_timedelta(indexes, unit='s')
+        data = pd.DataFrame(data=feature_data, index=indexes, columns=columns)
+        return data
