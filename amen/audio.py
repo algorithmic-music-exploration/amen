@@ -61,6 +61,3 @@ class Audio(object):
         data = pd.DataFrame(data=amplitudes, index=indexes, columns=['amplitude'])
         return data
 
-
-
-
