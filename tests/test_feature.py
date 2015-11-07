@@ -51,7 +51,7 @@ def test_base_validation():
 
 
 # Test at()
-time_slices = [TimeSlice(0, 0.5), TimeSlice(1, 0.5)]
+time_slices = [TimeSlice(0, 0.5, audio), TimeSlice(1, 0.5, audio)]
 feature_at = test_feature.at(time_slices)
 
 test_slice = time_slices[0]

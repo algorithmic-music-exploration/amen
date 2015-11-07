@@ -5,7 +5,7 @@ import librosa
 import pandas as pd
 import numpy as np
 from amen.feature import Feature
-from amen.timing_list import TimingList
+from amen.time import TimingList
 
 class Audio(object):
     """
