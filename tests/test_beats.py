@@ -13,4 +13,3 @@ def test_beats():
     beats = audio.timings['beats']
     assert isinstance(beats, TimingList)
     assert len(beats) == 10, 'expected 10 beats, found %d' % len(beats)
-

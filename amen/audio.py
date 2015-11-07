@@ -4,6 +4,7 @@
 import librosa
 from amen.timing_list import TimingList
 
+
 class Audio(object):
     """
     Audio object: should wrap the output from libRosa.
@@ -15,7 +16,7 @@ class Audio(object):
         """
         self.file_path = file_path
         y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
-        self.sample_rate = sr
+        self.sample_rate = float(sr)
         self.raw_samples = y
         if convert_to_mono:
             self.num_channels = 1
