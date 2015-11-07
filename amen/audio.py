@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import librosa
+import pandas as pd
+import numpy as np
+from amen.feature import Feature
 from amen.timing_list import TimingList
-
 
 class Audio(object):
     """
@@ -20,6 +22,7 @@ class Audio(object):
         self.raw_samples = y
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
+        self.features = self.create_features()
         self.timings = self.create_timings()
 
     def create_timings(self):
@@ -41,3 +44,42 @@ class Audio(object):
         starts_durs.append((beat_times[-1], self.duration - beat_times[-1]))
 
         return starts_durs
+
+    def create_features(self):
+        """
+        Creates the various features in the features dict.
+        """
+        features = {}
+        features['centroid'] = Feature(self.get_centroid())
+        features['amplitude'] = Feature(self.get_amplitude())
+        return features
+
+    def get_centroid(self):
+        """
+        Gets spectral centroid data from librosa and loads it into a feature.
+        """
+        mono_samples = librosa.to_mono(self.raw_samples)
+        centroids = librosa.feature.spectral_centroid(mono_samples)
+        data = self._convert_to_dataframe(centroids, ['spectral_centroid'])
+        return data
+
+    def get_amplitude(self):
+        """
+        Gets amplitude data from librosa and loads it into a feature.
+        """
+        mono_samples = librosa.to_mono(self.raw_samples)
+        amplitudes = librosa.feature.rmse(mono_samples)
+        data = self._convert_to_dataframe(amplitudes, ['amplitude'])
+
+        return data
+
+    def _convert_to_dataframe(self, feature_data, columns):
+        """
+        Take feature data, convert to a pandas dataframe.
+        """
+        feature_data = feature_data.transpose()
+        frame_numbers = np.arange(len(feature_data))
+        indexes = librosa.frames_to_time(frame_numbers)
+        indexes = pd.to_timedelta(indexes, unit='s')
+        data = pd.DataFrame(data=feature_data, index=indexes, columns=columns)
+        return data
