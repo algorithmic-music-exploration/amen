@@ -35,9 +35,9 @@ def test_channels():
 
 def test_has_amplitude_feature():
     res = librosa.feature.rmse(mono_audio.raw_samples)[0]
-    assert(mono_audio.features["amplitude"].iloc[0].item() == res[0])
+    assert(mono_audio.features["amplitude"].data.iloc[0].item() == res[0])
 
 def test_has_centroid_feature():
     res = librosa.feature.spectral_centroid(mono_audio.raw_samples)[0]
-    assert(mono_audio.features["centroid"].iloc[0].item() == res[0])
+    assert(mono_audio.features["centroid"].data.iloc[0].item() == res[0])
 

@@ -28,8 +28,8 @@ class Audio(object):
         Creates the various features in the features dict.
         """
         features = {}
-        features['centroid'] = self.get_centroid()
-        features['amplitude'] = self.get_amplitude()
+        features['centroid'] = Feature(self.get_centroid())
+        features['amplitude'] = Feature(self.get_amplitude())
         return features
 
     def get_centroid(self):
@@ -61,3 +61,4 @@ class Audio(object):
         indexes = pd.to_timedelta(indexes, unit='s')
         data = pd.DataFrame(data=feature_data, index=indexes, columns=columns)
         return data
+
