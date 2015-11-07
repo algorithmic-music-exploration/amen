@@ -22,7 +22,6 @@ class Audio(object):
             duration, in seconds
         features: dict
             collection of named feature objects
-
     """
 
     def __init__(self, file_path, convert_to_mono=False, sample_rate=22050):
@@ -44,7 +43,7 @@ class Audio(object):
 
 
         Returns
-        -----
+        ------
         An Audio object
         """
 
@@ -121,7 +120,7 @@ class Audio(object):
 
         Returns
         -----
-        Pandas.DataFrame        
+        pandas.DataFrame        
         """
         feature_data = feature_data.transpose()
         frame_numbers = np.arange(len(feature_data))
