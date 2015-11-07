@@ -22,15 +22,21 @@ class Audio(object):
         self.raw_samples = y
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
-        self.features = self.create_features()
         self.timings = self.create_timings()
+        self.features = self.create_features()
 
     def create_timings(self):
+        """
+        Create timings in a timings dict.
+        """
         timings = {}
         timings['beats'] = TimingList('beats', self.get_beats(), self)
         return timings
 
     def get_beats(self):
+        """
+        Gets beats using librosa's beat tracker.
+        """
         y_mono = librosa.to_mono(self.raw_samples)
         tempo, beat_frames = librosa.beat.beat_track(
             y=y_mono, sr=self.sample_rate, trim=False)
