@@ -6,6 +6,9 @@ import pandas as pd
 
 from .time import TimeSlice
 
+# hey!  when you get to feature collections, remember that you just put a dict and have it implement.at across all members of the dict!
+# and then you need a smart way to reference 2 or more things from the dict, but someone has solved that, i'm sure.
+
 class Feature(object):
     """
     Core feature container object.  Handles indexing and time-slicing.
