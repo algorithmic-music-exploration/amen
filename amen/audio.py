@@ -3,6 +3,7 @@
 
 import librosa
 import pandas as pd
+import numpy as np
 from amen.feature import Feature
 
 class Audio(object):
@@ -54,8 +55,8 @@ class Audio(object):
         """
         Take feature data, convert to a pandas dataframe.
         """
-        feature_data = feature_data[0]
-        frame_numbers = range(len(feature_data))
+        feature_data = feature_data.transpose()
+        frame_numbers = np.arange(len(feature_data))
         indexes = librosa.frames_to_time(frame_numbers)
         indexes = pd.to_timedelta(indexes, unit='s')
         data = pd.DataFrame(data=feature_data, index=indexes, columns=columns)
