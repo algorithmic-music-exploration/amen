@@ -18,11 +18,8 @@ class Audio(object):
         y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
         self.sample_rate = float(sr)
         self.raw_samples = y
-        if convert_to_mono:
-            self.num_channels = 1
-        else:
-            self.num_channels = 2
-        self.duration = len(self.raw_samples) / self.sample_rate
+        self.num_channels = y.ndim
+        self.duration = librosa.get_duration(y=y, sr=sr)
         self.timings = self.create_timings()
 
     def create_timings(self):
