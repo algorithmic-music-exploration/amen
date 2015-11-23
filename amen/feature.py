@@ -4,12 +4,10 @@ import six
 import numpy as np
 import pandas as pd
 
-from .time import TimeSlice
-
-# hey!  when you get to feature collections, remember that you just put a dict and have it implement.at across all members of the dict!
-# and then you need a smart way to reference 2 or more things from the dict, but someone has solved that, i'm sure.
+from amen.time import TimeSlice
 
 class Feature(object):
+<<<<<<< HEAD
     """
     Core feature container object.  Handles indexing and time-slicing.
 
@@ -83,3 +81,27 @@ class Feature(object):
         # return the new feature object
         return Feature(data=timed_data, aggregate=self.aggregate, base=self)
 
+class FeatureCollection(dict):
+    '''
+    A dictionary of features.
+
+    Delegates `.at` to the features it contains.
+
+    Allows for selection of multiple keys, which returns a smaller feature collection.
+    '''
+
+    def at(self, time_slices):
+        new_features = FeatureCollection()
+        for key in self.keys():
+            new_features[key] = self[key].at(time_slices)
+        return new_features
+
+    def get(self, keys):
+        if type(keys) != list:
+            keys = [keys]
+
+        new_features = FeatureCollection()
+        for key in keys:
+            if key in self:
+                new_features[key] = self[key]
+        return new_features

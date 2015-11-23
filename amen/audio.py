@@ -4,7 +4,9 @@
 import librosa
 import pandas as pd
 import numpy as np
+
 from amen.feature import Feature
+from amen.feature import FeatureCollection
 
 class Audio(object):
     """
@@ -57,19 +59,19 @@ class Audio(object):
 
     def _create_features(self):
         """
-        Creates the features dict
+        Creates the FeatureCollection, and loads each feature.
 
         Parameters
         ---------
 
         Returns
         -----
-        dict
-            Dictionary with each Amen.Feature object named correctly
+        FeatureCollection
+            FeatureCollection with each Amen.Feature object named correctly
         """
-        features = {}
-        features['centroid'] = self._get_centroid()
-        features['amplitude'] = self._get_amplitude()
+        features = FeatureCollection()
+        features['centroid'] = Feature(self.get_centroid())
+        features['amplitude'] = Feature(self.get_amplitude())
         return features
 
     def _get_centroid(self):
