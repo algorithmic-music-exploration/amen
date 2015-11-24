@@ -16,7 +16,7 @@ class TimeSlice(object):
         self.audio = audio
 
     def __repr__(self):
-        args = self.time.delta / 1000000000.0, self.duration.delta / 1000000000.0
+        args = self.time.delta * 1e-9, self.duration.delta * 1e-9
         return '<TimeSlice, start: {0:.2f}, duration: {1:.2f}'.format(*args)
 
 class TimingList(list):
