@@ -70,8 +70,8 @@ class Audio(object):
             FeatureCollection with each Amen.Feature object named correctly
         """
         features = FeatureCollection()
-        features['centroid'] = Feature(self.get_centroid())
-        features['amplitude'] = Feature(self.get_amplitude())
+        features['centroid'] = self._get_centroid()
+        features['amplitude'] = self._get_amplitude()
         return features
 
     def _get_centroid(self):
