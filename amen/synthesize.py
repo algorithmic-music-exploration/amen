@@ -18,12 +18,15 @@ def synthesize(inputs):
     tuple_list = []
     if type(inputs) == list:
         tuple_list = inputs
-        pass
     elif type(inputs) == tuple
         tuple_list = [inputs]
     else
-        start_times = [time_slice.start for time_slice in inputs]
-        tuple_list = [(inputs, start_times)]
+        time_index = 0.0
+        timings = []
+        for time_slice in inputs:
+            timings.append(time_index)
+            time_index = time_index + time_slice.duration
+        tuple_list = [(inputs, timings)]
 
     # now we do the same thing to everything
     sparse_array = np.zeros(2, (44100 * 60 * 20)) # stereo, 44.1, 20 minutes max
@@ -39,12 +42,4 @@ def synthesize(inputs):
     # truncate the array
     an_array = truncate(sparse_array)
     return an_array
-
-
-
-
-
-         
-
-
 
