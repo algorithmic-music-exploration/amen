@@ -40,14 +40,14 @@ class Audio(object):
         y_mono = librosa.to_mono(self.raw_samples)
         tempo, beat_frames = librosa.beat.beat_track(
             y=y_mono, sr=self.sample_rate, trim=False)
+
         # convert frames to times
         beat_times = librosa.frames_to_time(beat_frames, sr=self.sample_rate)
-        # make the list of (start, duration)s that TimingList expects
-        starts_durs = []
-        for i, start in enumerate(beat_times[:-1]):
-            starts_durs.append((start, beat_times[i+1] - start))
-        # now get the last one
-        starts_durs.append((beat_times[-1], self.duration - beat_times[-1]))
+        # pad beat times to full duration
+        beat_times = librosa.util.fix_frames(beat_times, x_min=None, x_max=self.duration)
+
+        # make the list of (start, duration) tuples that TimingList expects
+        starts_durs = [(s, t-s) for (s,t) in zip(beat_times, beat_times[1:])]
 
         return starts_durs
 
