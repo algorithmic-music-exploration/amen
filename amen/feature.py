@@ -90,12 +90,38 @@ class FeatureCollection(dict):
     """
 
     def at(self, time_slices):
+        """
+        Resample each feature at a new time slice index.
+
+        Parameters
+        ----------
+        time_slices : TimeSlice or TimeSlice collection
+            The time slices at which to index this feature object
+
+        Returns
+        -------
+        new_features : FeatureCollection
+            The resampled feature data
+        """
         new_features = FeatureCollection()
         for key in self.keys():
             new_features[key] = self[key].at(time_slices)
         return new_features
 
     def get(self, keys):
+        """
+        Get a subset of the keys in the currect feature collection
+
+        Parameters
+        ----------
+        keys : A string or list of strings
+            The keys to return from the current feature collection
+
+        Returns
+        -------
+        new_features : FeatureCollection
+            The subset of keys
+        """
         if type(keys) != list:
             keys = [keys]
 
