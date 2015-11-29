@@ -94,10 +94,12 @@ def test_at():
     assert(feature_collection_at['test'].data.loc[test_slice.time].all() == target_data.all())
 
 def test_get():
+    # Casting to list for Python 3
     new_feature_collection = feature_collection.get('another_test')
-    assert(new_feature_collection.keys() == ['another_test'])
+    assert(list(new_feature_collection.keys()) == ['another_test'])
 
 def test_get_with_list():
+    # Casting to list for Python 3
     new_feature_collection = feature_collection.get(['another_test'])
-    assert(new_feature_collection.keys() == ['another_test'])
+    assert(list(new_feature_collection.keys()) == ['another_test'])
 
