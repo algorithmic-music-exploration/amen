@@ -3,6 +3,7 @@
 
 import librosa
 from amen.audio import Audio
+from amen.feature import FeatureCollection
 from amen.utils import example_audio_file
 
 EXAMPLE_FILE = example_audio_file()
@@ -32,6 +33,9 @@ def test_sample_rate():
 
 def test_channels():
     assert(mono_audio.num_channels == 1)
+
+def test_has_feature_collection():
+    assert(type(mono_audio.features) == FeatureCollection)
 
 def test_has_amplitude_feature():
     res = librosa.feature.rmse(mono_audio.raw_samples)[0]
