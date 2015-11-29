@@ -7,21 +7,34 @@ import pandas as pd
 from .time import TimeSlice
 
 class Feature(object):
-    '''Core feature container object.
+    """
+    Core feature container object.  Handles indexing and time-slicing.
 
-    Handles indexing and time-slicing
-    '''
+    Attributes
+    ---------
+
+    Methods
+    ------
+    at(time_slices)
+        Resample the feature at the given TimeSlices
+    """
     def __init__(self, data, aggregate=np.mean, base=None):
-        '''
+        """
+        Constructor for feature object
+
         Parameters
         ----------
-        data : pd.DataFrame
+        data: pandas.DataFrame
             Time-indexed data frame of features
 
-        aggregate : function
+        aggregate: function
             resample-aggregation function or mapping
 
-        '''
+        Returns
+        ------
+        A Feature object
+
+        """
 
         # Check that the arguments have the right types
         assert isinstance(data, pd.DataFrame)
@@ -35,18 +48,19 @@ class Feature(object):
         self.base = base
 
     def at(self, time_slices):
-        '''Resample the data at a new time slice index.
+        """
+        Resample the data at a new time slice index.
 
         Parameters
         ----------
-        time_slices : TimeSlice or TimeSlice collection
+        time_slices: TimeSlice or TimeSlice collection
             The time slices at which to index this feature object
 
         Returns
         -------
-        feature_at : Feature
+        Feature
             The resampled feature data
-        '''
+        """
 
         if self.base is not None:
             return self.base.at(time_slices)
