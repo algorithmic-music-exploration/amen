@@ -25,9 +25,7 @@ class TimingList(list):
     """
 
     def __init__(self, name, timings, audio, unit='s'):
-        # This assumes that we're going to get a list of tuples (start, duration) from librosa,
-        # which may or may not be true.
         self.name = name
         for (start, duration) in timings:
-            slice = TimeSlice(start, duration, audio, unit=unit)
-            self.append(slice)
+            time_slice = TimeSlice(start, duration, audio, unit=unit)
+            self.append(time_slice)
