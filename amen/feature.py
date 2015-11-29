@@ -7,7 +7,6 @@ import pandas as pd
 from amen.time import TimeSlice
 
 class Feature(object):
-<<<<<<< HEAD
     """
     Core feature container object.  Handles indexing and time-slicing.
 
@@ -34,7 +33,6 @@ class Feature(object):
         Returns
         ------
         A Feature object
-
         """
 
         # Check that the arguments have the right types
@@ -82,13 +80,13 @@ class Feature(object):
         return Feature(data=timed_data, aggregate=self.aggregate, base=self)
 
 class FeatureCollection(dict):
-    '''
+    """
     A dictionary of features.
 
     Delegates `.at` to the features it contains.
 
     Allows for selection of multiple keys, which returns a smaller feature collection.
-    '''
+    """
 
     def at(self, time_slices):
         new_features = FeatureCollection()
