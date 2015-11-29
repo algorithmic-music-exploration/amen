@@ -10,6 +10,7 @@ from pandas.util.testing import assert_frame_equal
 
 from amen.audio import Audio
 from amen.feature import Feature
+from amen.feature import FeatureCollection
 from amen.time import TimeSlice
 from amen.utils import example_audio_file
 
@@ -82,4 +83,21 @@ def test_base_with_second_resample():
 def test_with_single_slice():
     feature_at = test_feature.at(time_slices[0])
     assert(len(feature_at.data) == 1)
+
+# Test FeatureCollection
+feature_collection = FeatureCollection()
+feature_collection['test'] = test_feature
+feature_collection['another_test'] = test_feature
+
+def test_at():
+    feature_collection_at = feature_collection.at(time_slices)
+    assert(feature_collection_at['test'].data.loc[test_slice.time].all() == target_data.all())
+
+def test_get():
+    new_feature_collection = feature_collection.get('another_test')
+    assert(new_feature_collection.keys() == ['another_test'])
+
+def test_get_with_list():
+    new_feature_collection = feature_collection.get(['another_test'])
+    assert(new_feature_collection.keys() == ['another_test'])
 

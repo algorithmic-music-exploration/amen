@@ -79,6 +79,7 @@ class Feature(object):
         # return the new feature object
         return Feature(data=timed_data, aggregate=self.aggregate, base=self)
 
+
 class FeatureCollection(dict):
     """
     A dictionary of features.
@@ -103,3 +104,4 @@ class FeatureCollection(dict):
             if key in self:
                 new_features[key] = self[key]
         return new_features
+
