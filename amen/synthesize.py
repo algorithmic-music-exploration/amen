@@ -18,31 +18,34 @@ def synthesize(inputs):
     tuple_list = []
     if type(inputs) == list:
         tuple_list = inputs
-    elif type(inputs) == tuple
+    elif type(inputs) == tuple:
         tuple_list = [inputs]
-    else
+    else:
         time_index = 0.0
         timings = []
         for time_slice in inputs:
             timings.append(time_index)
-            time_index = time_index + time_slice.duration
+            time_index = time_index + time_slice.duration.delta * 1e-9
         tuple_list = [(inputs, timings)]
 
     # now we do the same thing to everything
-    sparse_array = np.zeros(2, (22050 * 60 * 20)) # stereo, 22, 20 minutes max
+    # where and how do we do the resample?
+    array_shape = (2, (22050 * 60 * 2))
+    sparse_array = np.zeros(array_shape)
     for (time_slices, timings) in tuple_list:
-        for index in range(len(time_slices)): # parallel lists!
+        for index in range(len(time_slices)): # parallel lists: note that timings is in seconds
             time_slice = time_slices[index]
-            start_time = start_times[index]
-            resampled_audio = time_slice.get_audio() # need this function and the resample!
+            start_time = timings[index]
 
-            # get the right samples.  sample rate matters a lot here!
-            sample_index = librosa.time_to_samples([time_slice.start, time_slice.start + time_slice.duration]))
+            resampled_audio = time_slice.get_samples() 
 
+            # get the right samples in the sparse array.
             # what about clipping, etc?  also need to try/catch array out of bound things here
+            duration = time_slice.duration.delta * 1e-9
+            sample_index = librosa.time_to_samples([start_time, start_time + duration]) 
             sparse_array[:, sample_index[0]:sample_index[1]] += resampled_audio
 
-
+    return
     # truncate the array
     an_array = truncate(sparse_array)
     return an_array

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import six
+import librosa
 import numpy as np
 import pandas as pd
 
@@ -23,7 +24,9 @@ class TimeSlice(object):
         """
         Gets the samples corresponding to this TimeSlice from the parent audio object.
         """
-        sample_index = librosa.time_to_samples([self.start, self.start + self.duration])
+        start = self.time.delta * 1e-9
+        duration = self.duration.delta * 1e-9
+        sample_index = librosa.time_to_samples([start, duration])
         samples = self.audio.raw_samples[:, sample_index[0]:sample_index[1]]
 
         return samples
