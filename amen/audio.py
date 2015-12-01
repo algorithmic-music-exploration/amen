@@ -7,6 +7,7 @@ import numpy as np
 
 from amen.feature import Feature
 from amen.feature import FeatureCollection
+from amen.time import TimingList
 
 class Audio(object):
     """
@@ -56,6 +57,33 @@ class Audio(object):
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
         self.features = self._create_features()
+        self.timings = self._create_timings()
+
+    def _create_timings(self):
+        """
+        Create timings in a timings dict.
+        """
+        timings = {}
+        timings['beats'] = TimingList('beats', self._get_beats(), self)
+        return timings
+
+    def _get_beats(self):
+        """
+        Gets beats using librosa's beat tracker.
+        """
+        y_mono = librosa.to_mono(self.raw_samples)
+        tempo, beat_frames = librosa.beat.beat_track(
+            y=y_mono, sr=self.sample_rate, trim=False)
+
+        # convert frames to times
+        beat_times = librosa.frames_to_time(beat_frames, sr=self.sample_rate)
+        # pad beat times to full duration
+        beat_times = librosa.util.fix_frames(beat_times, x_min=None, x_max=self.duration)
+
+        # make the list of (start, duration) tuples that TimingList expects
+        starts_durs = [(s, t-s) for (s,t) in zip(beat_times, beat_times[1:])]
+
+        return starts_durs
 
     def _create_features(self):
         """
@@ -130,4 +158,3 @@ class Audio(object):
         indexes = pd.to_timedelta(indexes, unit='s')
         data = pd.DataFrame(data=feature_data, index=indexes, columns=columns)
         return data
-
