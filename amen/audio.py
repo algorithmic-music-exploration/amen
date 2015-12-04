@@ -59,6 +59,12 @@ class Audio(object):
         self.features = self._create_features()
         self.timings = self._create_timings()
 
+    def to_wav(self, filename):
+        """
+        Write the samples out to the given filename
+        """
+        librosa.output.write_wav(filename, self.raw_samples, 22050)
+
     def _create_timings(self):
         """
         Create timings in a timings dict.
