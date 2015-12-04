@@ -27,7 +27,7 @@ class Audio(object):
             collection of named feature objects
     """
 
-    def __init__(self, file_path, convert_to_mono=False, sample_rate=22050):
+    def __init__(self, file_path=None, raw_samples=None, convert_to_mono=False, sample_rate=22050):
         """
         Audio constructor.
         Opens a file path, loads the audio with librosa, and prepares the features
@@ -37,6 +37,9 @@ class Audio(object):
 
         file_path: string
             path to the audio file to load
+
+        raw_samples: np.array
+            raw samples to use as the audio.
 
         convert_to_mono: boolean
             (optional) converts the file to mono on loading
@@ -49,9 +52,13 @@ class Audio(object):
         ------
         An Audio object
         """
+        if file_path:
+            y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
+        elif raw_samples is not None:
+            y = raw_samples
+            sr = sample_rate
 
         self.file_path = file_path
-        y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
         self.sample_rate = float(sr)
         self.raw_samples = y
         self.num_channels = y.ndim
