@@ -1,61 +1,67 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import types
 import librosa
 import pandas as pd
 import numpy as np
 from amen.audio import Audio
+from amen.time import TimingList
 
 def synthesize(inputs):
     """
-    Function to generate new Audios that can easily be written to disk
+    Function to generate new Audios for output or further remixing
 
-    synthesize(time_slices) # assumes a single list or generator that just return beats
-    synthesize((time_slices, timings)) # assumes a tuple of slices and times, or a generator that returns audio and times
-    synthesize([(ts1, t1), (ts2, t2), ...]) # assumes a list of tuples, or a list of generators
+    This currently takes too many damn things.
+    We eventually get to a list/generator that outputs (TimeSlice, time)
+
+    synthesize(time_slices)
+    # assumes a single list of time slices, that should play back-to-back.  
+    # it is our job to find the timings and zip them to be a list of (ts, t)
+
+    synthesize((time_slices, timings))
+    # assumes a tuple of slices and times, as parallel lists.
+    # it is our job zip them
+
+    # should we also support lists of tuples, zipped by the user?  aiii...
+
+    synthesize(some_generator(time_slices))
+    # assumes a generator that returns tuples of slices and times
 
     ?where and how do we do the resample?
     """
 
     # First we organize our inputs.
-    # We want to end up with a list of tuples / generators that give tuples, 
-    # regardless of the input type
-    tuple_list = []
-    if type(inputs) == list:
-        tuple_list = inputs
-    elif type(inputs) == tuple:
-        tuple_list = [inputs]
-    else:
-        time_index = 0.0
+    proper_list = []
+    if type(inputs) == TimingList or type(inputs) == list:
+        time_index = pd.to_timedelta(0.0, 's')
         timings = []
         for time_slice in inputs:
             timings.append(time_index)
-            time_index = time_index + time_slice.duration.delta * 1e-9
-        tuple_list = [(inputs, timings)]
+            time_index = time_index + time_slice.duration
+        proper_list = zip(inputs, timings)
+    elif type(inputs) == tuple:
+        proper_list = zip(inputs[0], inputs[1])
+    elif isinstance(inputs, types.GeneratorType):
+        proper_list = inputs
 
     max_time = 0.0
     array_shape = (2, 22050 * 60 * 20)
     sparse_array = np.zeros(array_shape)
 
-    for time_slices, timings in tuple_list:
-        for index, time_slice in enumerate(time_slices):
-            start_time = timings[index] # parallel lists: note that timings is in seconds
-            duration = time_slice.duration.delta * 1e-9
+    for time_slice, start_time in proper_list:
+        start_time = start_time.delta * 1e-9
+        duration = time_slice.duration.delta * 1e-9
+        if start_time + duration > max_time:
+            max_time = start_time + duration
 
-            # check to see where we need to truncate our array to
-            if start_time + duration > max_time:
-                max_time = start_time + duration
+        resampled_audio = time_slice.get_samples()
 
-            resampled_audio = time_slice.get_samples() 
-
-            # get the right samples in the sparse array.
-            # what about clipping, etc?  also need to try/catch array out of bound things here
-            sample_index = librosa.time_to_samples([start_time, start_time + duration]) 
-            target = sparse_array[:, sample_index[0]:sample_index[1]]
-            print "----"
-            print index, start_time, duration, sample_index[0], sample_index[1]
-            print len(target[0]), len(resampled_audio[0])
-            target += resampled_audio
+        # get the right samples in the sparse array.
+        # what about clipping, etc?  also need to try/catch array out of bound things here
+        sample_index = librosa.time_to_samples([start_time, start_time + duration])
+        target = sparse_array[:, sample_index[0]:sample_index[1]]
+        target += resampled_audio
 
 
     max_samples = librosa.time_to_samples([max_time])
