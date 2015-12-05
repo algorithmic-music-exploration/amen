@@ -27,7 +27,7 @@ class TimeSlice(object):
         start = self.time.delta * 1e-9
         duration = self.duration.delta * 1e-9
         sample_index = librosa.time_to_samples([start, start + duration])
-        samples = self.audio.raw_samples[:, sample_index[0]:sample_index[1]]
+        samples = self.audio.analysis_samples[:, sample_index[0]:sample_index[1]]
 
         return samples
 
