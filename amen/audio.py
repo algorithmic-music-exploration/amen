@@ -70,6 +70,7 @@ class Audio(object):
         self.duration = librosa.get_duration(y=y, sr=sr)
 
         if y.ndim == 2:
+            print y, y[0]
             left = librosa.resample(y[0], sr, self.analysis_sample_rate)
             right = librosa.resample(y[0], sr, self.analysis_sample_rate)
             self.analysis_samples = np.array([left, right])

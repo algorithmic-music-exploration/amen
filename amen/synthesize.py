@@ -28,7 +28,6 @@ def synthesize(inputs):
     synthesize(some_generator(time_slices))
     # assumes a generator that returns tuples of slices and times
 
-    ?where and how do we do the resample?
     """
 
     # First we organize our inputs.
@@ -59,12 +58,12 @@ def synthesize(inputs):
 
         # get the right samples in the sparse array.
         # what about clipping, etc?  also need to try/catch array out of bound things here
-        sample_index = librosa.time_to_samples([start_time, start_time + duration])
+        sample_index = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
         target = sparse_array[:, sample_index[0]:sample_index[1]]
         target += resampled_audio
 
 
-    max_samples = librosa.time_to_samples([max_time])
+    max_samples = librosa.time_to_samples([max_time], sr=time_slice.audio.sample_rate)
     truncated_array = sparse_array[:, 0:max_samples]
-    output = Audio(analysis_samples=truncated_array)
+    output = Audio(raw_samples=truncated_array)
     return output
