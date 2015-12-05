@@ -12,13 +12,13 @@ mono_audio = Audio(EXAMPLE_FILE, convert_to_mono=True, sample_rate=44100)
 
 def test_default_sample_rate():
     assert isinstance(audio.sample_rate, float)
-    assert(audio.sample_rate == 22050)
+    assert(audio.sample_rate == 44100)
 
 def test_default_channels():
     assert(audio.num_channels == 2)
 
 def test_duration():
-    duration = audio.analysis_samples.shape[-1] / float(audio.sample_rate)
+    duration = audio.raw_samples.shape[-1] / float(audio.sample_rate)
     assert(audio.duration == duration)
 
 def test_file_path():

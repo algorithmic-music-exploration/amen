@@ -46,7 +46,7 @@ def synthesize(inputs):
         proper_list = inputs
 
     max_time = 0.0
-    array_shape = (2, 22050 * 60 * 20)
+    array_shape = (2, 44100 * 60 * 20)
     sparse_array = np.zeros(array_shape)
 
     for time_slice, start_time in proper_list:
