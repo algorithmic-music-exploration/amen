@@ -18,7 +18,7 @@ class TimeSlice(object):
 
     def __repr__(self):
         args = self.time.delta * 1e-9, self.duration.delta * 1e-9
-        return '<TimeSlice, start: {0:.2f}, duration: {1:.2f}'.format(*args)
+        return '<TimeSlice, start: {0:.2f}, duration: {1:.2f}>'.format(*args)
 
     def get_samples(self):
         """
