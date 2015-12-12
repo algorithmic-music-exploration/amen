@@ -34,14 +34,14 @@ def synthesize(inputs):
 
     # First we organize our inputs.
     proper_list = []
-    if type(inputs) == TimingList or type(inputs) == list:
+    if isinstance(inputs, list):
         time_index = pd.to_timedelta(0.0, 's')
         timings = []
         for time_slice in inputs:
             timings.append(time_index)
             time_index = time_index + time_slice.duration
         proper_list = zip(inputs, timings)
-    elif type(inputs) == tuple:
+    elif isinstance(inputs, tuple):
         proper_list = zip(inputs[0], inputs[1])
     elif isinstance(inputs, types.GeneratorType):
         proper_list = inputs
