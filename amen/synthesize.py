@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from amen.audio import Audio
 from amen.time import TimingList
+from amen.exceptions import SynthesizeError
 
 def synthesize(inputs):
     """
@@ -45,7 +46,8 @@ def synthesize(inputs):
         proper_list = inputs
 
     max_time = 0.0
-    array_shape = (2, 44100 * 60 * 20)
+    array_length = 20 * 60 # 20 minutes!
+    array_shape = (2, 44100 * array_length)
     sparse_array = np.zeros(array_shape)
 
     for time_slice, start_time in proper_list:
@@ -53,11 +55,12 @@ def synthesize(inputs):
         duration = time_slice.duration.delta * 1e-9
         if start_time + duration > max_time:
             max_time = start_time + duration
+        elif start_time + duration > array_length
+            raise SynthesizeError("Amen can only synthsize up to 20 minutes of audio.")
 
         resampled_audio = time_slice.get_samples()
 
         # get the right samples in the sparse array.
-        # what about clipping, etc?  also need to try/catch array out of bound things here
         sample_index = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
         target = sparse_array[:, sample_index[0]:sample_index[1]]
         target += resampled_audio
