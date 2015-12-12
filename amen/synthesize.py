@@ -57,7 +57,7 @@ def synthesize(inputs):
         if start_time + duration > max_time:
             max_time = start_time + duration
         elif start_time + duration > array_length
-            raise SynthesizeError("Amen can only synthsize up to 20 minutes of audio.")
+            raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
         resampled_audio = time_slice.get_samples()
 
