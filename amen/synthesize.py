@@ -5,6 +5,7 @@ import types
 import librosa
 import pandas as pd
 import numpy as np
+from scipy.sparse import csr_matrix
 from amen.audio import Audio
 from amen.time import TimingList
 from amen.exceptions import SynthesizeError
@@ -48,7 +49,7 @@ def synthesize(inputs):
     max_time = 0.0
     array_length = 20 * 60 # 20 minutes!
     array_shape = (2, 44100 * array_length)
-    sparse_array = np.zeros(array_shape)
+    sparse_array = csr_matrix(array_shape)
 
     for time_slice, start_time in proper_list:
         start_time = start_time.delta * 1e-9
