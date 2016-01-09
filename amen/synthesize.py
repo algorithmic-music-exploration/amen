@@ -56,15 +56,28 @@ def synthesize(inputs):
         duration = time_slice.duration.delta * 1e-9
         if start_time + duration > max_time:
             max_time = start_time + duration
-        elif start_time + duration > array_length
+        elif start_time + duration > array_length:
             raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
-        resampled_audio = time_slice.get_samples()
+        # get the audio and the zero-crossing offsets, as samples
+        # gah, ok, this is closer.  
+        # I need to pass `duration` into get_samples, 
+        # and then move the zero-crossing finders that I currently have in time.py in here as _private methods.
+        # things to do tomorrow
+        resampled_audio, left_offsets, right_offsets = time_slice.get_samples() 
 
-        # get the right samples in the sparse array.
+        # get the right samples
         sample_index = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
+
+        # add the offsets
+        sample_index[0] = sample_index[0] + start_offset
+        sample_index[1] = sample_index[1] + end_offset
+
+        # define the target and add the target audio
         target = sparse_array[:, sample_index[0]:sample_index[1]]
         target += resampled_audio
+
+        # (this does not yet deal with the case where the first slice has to add stuff to the start!)
 
 
     max_samples = librosa.time_to_samples([max_time], sr=time_slice.audio.sample_rate)

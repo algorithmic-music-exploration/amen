@@ -6,6 +6,6 @@ class AmenError(Exception):
     '''The root amenexception class'''
     pass
 
-class SynthesizeError(LibrosaError):
+class SynthesizeError(AmenError):
     '''Exception class for errors in the synthesize'''
     pass

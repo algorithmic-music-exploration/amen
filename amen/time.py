@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import six
+from bisect import bisect_left
+from bisect import bisect_right
 import librosa
 import numpy as np
 import pandas as pd
@@ -26,10 +28,32 @@ class TimeSlice(object):
         """
         start = self.time.delta * 1e-9
         duration = self.duration.delta * 1e-9
-        sample_index = librosa.time_to_samples([start, start + duration], self.audio.sample_rate)
-        samples = self.audio.raw_samples[:, sample_index[0]:sample_index[1]]
+        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], self.audio.sample_rate)
 
-        return samples
+        left_offsets = self._get_offsets(self.audio.raw_samples[0], starting_sample, ending_sample)
+        right_offsets = self._get_offsets(self.audio.raw_samples[1], starting_sample, ending_sample)
+
+        samples = self._offset_samples(starting_sample, ending_sample, left_offsets, right_offsets)
+
+        return samples, left_offsets, right_offsets
+
+    def _get_offsets(self, channel, starting_sample, ending_sample):
+        zero_crossings = librosa.zero_crossings(channel)
+        zero_indexes = np.nonzero(zero_crossings)[0]
+
+        starting_crossing = zero_indexes[bisect_left(zero_indexes, starting_sample)]
+        starting_offset = starting_crossing - starting_sample
+
+        ending_crossing = zero_indexes[bisect_right(zero_indexes, ending_sample)]
+        ending_offset = ending_crossing - ending_sample
+
+        return (starting_offset, ending_offset)
+
+    def _offset_samples(self, starting_sample, ending_sample, left_offsets, right_offsets):
+        left_channel = self.audio.raw_samples[0, starting_sample + left_offsets[0] : ending_sample + left_offsets[1]]
+        right_channel = self.audio.raw_samples[1, starting_sample + right_offsets[0] : ending_sample + right_offsets[1]]
+        return np.array([left_channel, right_channel])
+        
 
 class TimingList(list):
     """
