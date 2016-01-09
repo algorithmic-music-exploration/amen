@@ -45,3 +45,4 @@ def test_has_centroid_feature():
     res = librosa.feature.spectral_centroid(mono_audio.analysis_samples)[0]
     assert(mono_audio.features["centroid"].data.iloc[0].item() == res[0])
 
+# need tests for to_wav!

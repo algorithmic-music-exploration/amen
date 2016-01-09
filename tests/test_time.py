@@ -19,3 +19,6 @@ def test_duration():
 def test_units():
     time_slice = TimeSlice(t, d, dummy_audio, unit='ms')
     assert(time_slice.time == pd.to_timedelta(t, 'ms'))
+
+
+# need tests for _offset_samples, get_samples, and _get_offsets 
