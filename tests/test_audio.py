@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import tempfile
 import librosa
 from amen.audio import Audio
 from amen.feature import FeatureCollection
@@ -45,4 +47,10 @@ def test_has_centroid_feature():
     res = librosa.feature.spectral_centroid(mono_audio.analysis_samples)[0]
     assert(mono_audio.features["centroid"].data.iloc[0].item() == res[0])
 
-# need tests for to_wav!
+def test_to_audio():
+    n, tempfilename = tempfile.mkstemp()
+    audio.to_wav(tempfilename)
+    new_audio = Audio(tempfilename)
+    os.remove(tempfilename)
+
+    assert np.allclose(audio.raw_samples, new_audio.raw_samples, rtol=1e-3, atol=1e-4)
