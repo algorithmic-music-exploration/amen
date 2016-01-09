@@ -52,35 +52,33 @@ def synthesize(inputs):
     sparse_array = csr_matrix(array_shape)
 
     for time_slice, start_time in proper_list:
+        # get the actual, zero-corrected audio and the offsets
+        resampled_audio, left_offsets, right_offsets = time_slice.get_samples()
+
+        # get the target start and duration
         start_time = start_time.delta * 1e-9
         duration = time_slice.duration.delta * 1e-9
+
+        # find the max time
         if start_time + duration > max_time:
             max_time = start_time + duration
         elif start_time + duration > array_length:
             raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
-        # get the audio and the zero-crossing offsets, as samples
-        # gah, ok, this is closer.  
-        # I need to pass `duration` into get_samples, 
-        # and then move the zero-crossing finders that I currently have in time.py in here as _private methods.
-        # things to do tomorrow
-        resampled_audio, left_offsets, right_offsets = time_slice.get_samples() 
+        # get the target start and end samples
+        starting_sample, ending_sample = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
 
-        # get the right samples
-        sample_index = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
+        # figure out the actual starting and ending samples for each channel
+        left_start = starting_sample + left_offsets[0]
+        left_end = ending_sample + left_offsets[1]
+        right_start = starting_sample + right_offsets[0]
+        right_end = ending_sample + right_offsets[1]
 
-        # add the offsets
-        sample_index[0] = sample_index[0] + start_offset
-        sample_index[1] = sample_index[1] + end_offset
-
-        # define the target and add the target audio
-        target = sparse_array[:, sample_index[0]:sample_index[1]]
-        target += resampled_audio
-
-        # (this does not yet deal with the case where the first slice has to add stuff to the start!)
-
+        # add the data from each channel to the array
+        sparse_array[0, left_start:left_end] += resampled_audio[0]
+        sparse_array[1, right_start:right_end] += resampled_audio[1]
 
     max_samples = librosa.time_to_samples([max_time], sr=time_slice.audio.sample_rate)
-    truncated_array = sparse_array[:, 0:max_samples]
+    truncated_array = sparse_array[:, 0:max_samples].toarray()
     output = Audio(raw_samples=truncated_array)
     return output
