@@ -71,7 +71,7 @@ class Audio(object):
 
         if y.ndim == 2:
             left = librosa.resample(y[0], sr, self.analysis_sample_rate)
-            right = librosa.resample(y[0], sr, self.analysis_sample_rate)
+            right = librosa.resample(y[1], sr, self.analysis_sample_rate)
             self.analysis_samples = np.array([left, right])
         elif y.ndim == 1:
             self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate)

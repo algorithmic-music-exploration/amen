@@ -47,8 +47,9 @@ def synthesize(inputs):
         proper_list = inputs
 
     max_time = 0.0
+    sample_rate = 44100
     array_length = 20 * 60 # 20 minutes!
-    array_shape = (2, 44100 * array_length)
+    array_shape = (2, sample_rate * array_length)
     sparse_array = csr_matrix(array_shape)
 
     for time_slice, start_time in proper_list:
@@ -78,7 +79,7 @@ def synthesize(inputs):
         sparse_array[0, left_start:left_end] += resampled_audio[0]
         sparse_array[1, right_start:right_end] += resampled_audio[1]
 
-    max_samples = librosa.time_to_samples([max_time], sr=time_slice.audio.sample_rate)
+    max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
     truncated_array = sparse_array[:, 0:max_samples].toarray()
     output = Audio(raw_samples=truncated_array)
     return output
