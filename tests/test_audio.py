@@ -54,7 +54,7 @@ def test_to_wav():
     # Couldn't get a dupe of the librosa output test working.  More to come!
     n, tempfilename = tempfile.mkstemp()
     audio.to_wav(tempfilename)
-    new_samples, new_sample_rate = librosa.load(tempfilename, sr=None)
+    new_samples, new_sample_rate = librosa.load(tempfilename, sr=audio.sample_rate)
     os.unlink(tempfilename)
 
     assert np.allclose(audio.sample_rate, new_sample_rate)
