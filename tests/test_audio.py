@@ -50,8 +50,6 @@ def test_has_centroid_feature():
     assert(mono_audio.features["centroid"].data.iloc[0].item() == res[0])
 
 def test_to_wav():
-    # gah.  Don't want to use mock because of multiple version / imports
-    # Couldn't get a dupe of the librosa output test working.  More to come!
     n, tempfilename = tempfile.mkstemp()
     audio.to_wav(tempfilename)
     new_samples, new_sample_rate = librosa.load(tempfilename, sr=audio.sample_rate)

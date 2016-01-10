@@ -83,7 +83,7 @@ class Audio(object):
         """
         Write the samples out to the given filename
         """
-        librosa.output.write_wav(filename, self.raw_samples, self.sample_rate, norm=False)
+        librosa.output.write_wav(filename, self.raw_samples, int(self.sample_rate), norm=False)
 
     def _create_timings(self):
         """
