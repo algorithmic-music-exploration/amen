@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
+import os
+import tempfile
+import numpy as np
 import librosa
 from amen.audio import Audio
 from amen.feature import FeatureCollection
@@ -48,4 +52,10 @@ def test_has_centroid_feature():
 def test_to_wav():
     # gah.  Don't want to use mock because of multiple version / imports
     # Couldn't get a dupe of the librosa output test working.  More to come!
-    pass
+    n, tempfilename = tempfile.mkstemp()
+    audio.to_wav(tempfilename)
+    new_samples, new_sample_rate = librosa.load(tempfilename, sr=None)
+    os.unlink(tempfilename)
+
+    assert np.allclose(audio.sample_rate, new_sample_rate)
+    assert np.allclose(audio.raw_samples, new_samples, rtol=1e-3, atol=1e-4)
