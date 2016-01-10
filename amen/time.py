@@ -41,7 +41,7 @@ class TimeSlice(object):
         zero_crossings = librosa.zero_crossings(channel)
         zero_indexes = np.nonzero(zero_crossings)[0]
 
-        starting_crossing = zero_indexes[bisect_left(zero_indexes, starting_sample)]
+        starting_crossing = zero_indexes[bisect_left(zero_indexes, starting_sample) - 1]
         starting_offset = starting_crossing - starting_sample
 
         ending_crossing = zero_indexes[bisect_right(zero_indexes, ending_sample)]
