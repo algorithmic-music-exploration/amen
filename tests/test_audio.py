@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import tempfile
+import os
+from mock import patch
 import librosa
 from amen.audio import Audio
 from amen.feature import FeatureCollection
@@ -48,9 +49,8 @@ def test_has_centroid_feature():
     assert(mono_audio.features["centroid"].data.iloc[0].item() == res[0])
 
 def test_to_audio():
-    n, tempfilename = tempfile.mkstemp()
-    audio.to_wav(tempfilename)
-    new_audio = Audio(tempfilename)
-    os.remove(tempfilename)
-
-    assert np.allclose(audio.raw_samples, new_audio.raw_samples, rtol=1e-3, atol=1e-4)
+    with patch.object(librosa.output, 'write_wav') as mock:
+        n, tempfilename = tempfile.mkstemp()
+        audio.to_wav(tempfilename)
+        os.remove(tempfilename)
+    mock.assert_called_with(tempfilename, audio.raw_samples, audio.sample_rate, norm=False)

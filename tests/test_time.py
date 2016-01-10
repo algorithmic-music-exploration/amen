@@ -42,10 +42,6 @@ def test_offset_samples():
     assert(res.shape == (2, 3))
 
 samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
-def test_get_samples_ends_in_zeros():
-    # Unsure about this one - need to talk to bmcfee, I think (or ignore it?)
-    pass
-
 def test_get_samples_shape():
     duration = audio.timings['beats'][5].duration.delta * 1e-9
     starting_sample, ending_sample = librosa.time_to_samples([0, duration], audio.sample_rate)
