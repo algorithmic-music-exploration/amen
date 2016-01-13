@@ -41,7 +41,6 @@ if [ ! -d "$src" ]; then
 
         pip install git+https://github.com/bmcfee/samplerate.git
         pip install python-coveralls
-        pip install mock
 
         source deactivate
     popd
