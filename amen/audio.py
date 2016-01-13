@@ -58,6 +58,10 @@ class Audio(object):
         self.duration = librosa.get_duration(y=y, sr=sr)
         self.features = self._create_features()
         self.timings = self._create_timings()
+        
+    def __repr__(self):
+        args = self.duration.delta * 1e-9
+        return '<Audio, duration: {1:.2f}>'.format(*args)
 
     def _create_timings(self):
         """
