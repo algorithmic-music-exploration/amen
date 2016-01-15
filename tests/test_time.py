@@ -26,14 +26,14 @@ def test_units():
     assert(time_slice.time == pd.to_timedelta(t, 'ms'))
 
 def test_get_offsets():
-    faux_audio = np.array([[1,-1, 0, 1, 0, -1, 1],
-                           [0, 0, 0, 0, 0, 0, 0]])
-    time_slice = TimeSlice(t, d, None)
-    res = time_slice._get_offsets(faux_audio[0], 3, 4)
-    assert(res == (-1, 1))
+    faux_samples = np.array([[1,-1, 0, 1, 0, -1, 1],
+                             [1, -1, 0, 1, 0, -1, 1]])
+    faux_audio = Audio(raw_samples=faux_samples)
+    time_slice = TimeSlice(t, d, faux_audio)
 
+    left, right = time_slice._get_offsets(3, 4)
+    assert(left == (-1, 1)) 
 
-# need tests for get_samples!
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
 
@@ -64,3 +64,4 @@ def test_get_samples_audio():
     original_samples = audio.raw_samples[0, starting_sample : ending_sample]
 
     assert(np.array_equiv(reset_samples, original_samples))
+
