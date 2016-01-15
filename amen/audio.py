@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import librosa
 import pandas as pd
 import numpy as np
@@ -60,8 +61,9 @@ class Audio(object):
         self.timings = self._create_timings()
         
     def __repr__(self):
-        args = self.duration.delta * 1e-9
-        return '<Audio, duration: {1:.2f}>'.format(*args)
+        file_name = os.path.split(self.file_path)[-1]
+        args = file_name, self.duration
+        return '<Audio, file: {0:s}, duration: {1:.2f}>'.format(*args)
 
     def _create_timings(self):
         """

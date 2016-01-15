@@ -47,7 +47,7 @@ class Feature(object):
         self.base = base
         
     def __repr__(self):
-        # Would be nice for us to pass a name in here.
+        # Would be nice for us to pass a name in here, one day
         return '<Feature>'
         
     def at(self, time_slices):
