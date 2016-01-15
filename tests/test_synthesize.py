@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import six
 import pandas as pd
 import librosa
 from amen.audio import Audio
@@ -31,7 +32,7 @@ def test_format_inputs_generator():
         for beat in audio.timings['beats']:
             yield beat, beat.time
     formatted_inputs = _format_inputs(the_generator())
-    assert(formatted_inputs.next() == the_generator().next())
+    assert(six.next(formatted_inputs) == six.next(the_generator()))
 
     
     
