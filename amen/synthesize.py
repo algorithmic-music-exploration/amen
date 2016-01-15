@@ -10,6 +10,21 @@ from amen.audio import Audio
 from amen.time import TimingList
 from amen.exceptions import SynthesizeError
 
+def _format_inputs(inputs):
+    formatted_list = []
+    if isinstance(inputs, list):
+        time_index = pd.to_timedelta(0.0, 's')
+        timings = []
+        for time_slice in inputs:
+            timings.append(time_index)
+            time_index = time_index + time_slice.duration
+        formatted_list = zip(inputs, timings)
+    elif isinstance(inputs, tuple):
+        formatted_list = zip(inputs[0], inputs[1])
+    elif isinstance(inputs, types.GeneratorType):
+        formatted_list = inputs
+    return formatted_list
+
 def synthesize(inputs):
     """
     Function to generate new Audios for output or further remixing
@@ -32,20 +47,6 @@ def synthesize(inputs):
 
     """
 
-    def _format_inputs(inputs):
-        formatted_list = []
-        if isinstance(inputs, list):
-            time_index = pd.to_timedelta(0.0, 's')
-            timings = []
-            for time_slice in inputs:
-                timings.append(time_index)
-                time_index = time_index + time_slice.duration
-            formatted_list = zip(inputs, timings)
-        elif isinstance(inputs, tuple):
-            formatted_list = zip(inputs[0], inputs[1])
-        elif isinstance(inputs, types.GeneratorType):
-            formatted_list = inputs
-        return formatted_list
 
     # First we organize our inputs.
     inputs = _format_inputs(inputs)
