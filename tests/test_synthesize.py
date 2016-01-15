@@ -11,20 +11,21 @@ from amen.synthesize import _format_inputs
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
 
-# need to split the organizer function out and write a test for it.
-
 def test_format_inputs_length():
     formatted_inputs = _format_inputs(audio.timings['beats'])
+    formatted_inputs = list(formatted_inputs)
     assert(len(audio.timings['beats']) == len(formatted_inputs))
 
 def test_format_inputs_list():
     formatted_inputs = _format_inputs(audio.timings['beats'])
+    formatted_inputs = list(formatted_inputs)
     beat = audio.timings['beats'][0]
     assert(formatted_inputs[0] == (audio.timings['beats'][0], beat.time))
 
 def test_format_inputs_parallel_list():
     times = [beat.time for beat in audio.timings['beats']]
     formatted_inputs = _format_inputs((audio.timings['beats'], times))
+    formatted_inputs = list(formatted_inputs)
     assert(formatted_inputs[0] == (audio.timings['beats'][0], times[0]))
 
 def test_format_inputs_generator():
