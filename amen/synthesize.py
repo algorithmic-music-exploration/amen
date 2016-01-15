@@ -32,19 +32,23 @@ def synthesize(inputs):
 
     """
 
+    def _format_inputs(inputs):
+        formatted_list = []
+        if isinstance(inputs, list):
+            time_index = pd.to_timedelta(0.0, 's')
+            timings = []
+            for time_slice in inputs:
+                timings.append(time_index)
+                time_index = time_index + time_slice.duration
+            formatted_list = zip(inputs, timings)
+        elif isinstance(inputs, tuple):
+            formatted_list = zip(inputs[0], inputs[1])
+        elif isinstance(inputs, types.GeneratorType):
+            formatted_list = inputs
+        return formatted_list
+
     # First we organize our inputs.
-    proper_list = []
-    if isinstance(inputs, list):
-        time_index = pd.to_timedelta(0.0, 's')
-        timings = []
-        for time_slice in inputs:
-            timings.append(time_index)
-            time_index = time_index + time_slice.duration
-        proper_list = zip(inputs, timings)
-    elif isinstance(inputs, tuple):
-        proper_list = zip(inputs[0], inputs[1])
-    elif isinstance(inputs, types.GeneratorType):
-        proper_list = inputs
+    inputs = _format_inputs(inputs)
 
     max_time = 0.0
     sample_rate = 44100
@@ -53,7 +57,7 @@ def synthesize(inputs):
     sparse_array = csr_matrix(array_shape)
 
     initial_offset = 0
-    for i, (time_slice, start_time) in enumerate(proper_list):
+    for i, (time_slice, start_time) in enumerate(inputs):
         # get the actual, zero-corrected audio and the offsets
         resampled_audio, left_offsets, right_offsets = time_slice.get_samples()
 
