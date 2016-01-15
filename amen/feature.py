@@ -45,7 +45,11 @@ class Feature(object):
             assert isinstance(base, Feature)
 
         self.base = base
-
+        
+    def __repr__(self):
+        # Would be nice for us to pass a name in here, one day
+        return '<Feature>'
+        
     def at(self, time_slices):
         """
         Resample the data at a new time slice index.
