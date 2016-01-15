@@ -42,12 +42,21 @@ class TimeSlice(object):
             channel = self.audio.raw_samples[channel_index]
             zero_crossings = librosa.zero_crossings(channel)
             zero_indexes = np.nonzero(zero_crossings)[0]
+
+            index = bisect_left(zero_indexes, starting_sample) - 1
+            if index < 0:
+                starting_offset = 0
+            else:
+                starting_crossing = zero_indexes[index]
+                starting_offset = starting_crossing - starting_sample
     
-            starting_crossing = zero_indexes[bisect_left(zero_indexes, starting_sample) - 1]
-            starting_offset = starting_crossing - starting_sample
-    
-            ending_crossing = zero_indexes[bisect_right(zero_indexes, ending_sample)]
-            ending_offset = ending_crossing - ending_sample
+            index = bisect_left(zero_indexes, ending_sample)
+            if index >= len(zero_indexes):
+                ending_offset = 0
+            else:
+                ending_crossing = zero_indexes[bisect_right(zero_indexes, ending_sample)]
+                ending_offset = ending_crossing - ending_sample
+
             if channel_index == 0:
                 left_offsets = (starting_offset, ending_offset)
             elif channel_index == 1:

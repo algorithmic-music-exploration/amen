@@ -52,9 +52,14 @@ def synthesize(inputs):
     array_shape = (2, sample_rate * array_length)
     sparse_array = csr_matrix(array_shape)
 
-    for time_slice, start_time in proper_list:
+    initial_offset = 0
+    for i, (time_slice, start_time) in enumerate(proper_list):
         # get the actual, zero-corrected audio and the offsets
         resampled_audio, left_offsets, right_offsets = time_slice.get_samples()
+
+        # set the initial offset, so we don't miss the start of the array
+        if i == 0:
+            initial_offset = max(left_offsets[0], right_offsets[0]) * -1
 
         # get the target start and duration
         start_time = start_time.delta * 1e-9
@@ -70,10 +75,10 @@ def synthesize(inputs):
         starting_sample, ending_sample = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
 
         # figure out the actual starting and ending samples for each channel
-        left_start = starting_sample + left_offsets[0]
-        left_end = ending_sample + left_offsets[1]
-        right_start = starting_sample + right_offsets[0]
-        right_end = ending_sample + right_offsets[1]
+        left_start = starting_sample + left_offsets[0] + initial_offset
+        left_end = ending_sample + left_offsets[1] + initial_offset
+        right_start = starting_sample + right_offsets[0] + initial_offset
+        right_end = ending_sample + right_offsets[1] + initial_offset
 
         # add the data from each channel to the array
         sparse_array[0, left_start:left_end] += resampled_audio[0]
