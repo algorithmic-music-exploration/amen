@@ -71,9 +71,11 @@ def synthesize(inputs):
         duration = time_slice.duration.delta * 1e-9
 
         # find the max time
+        print start_time, max_time, array_length
         if start_time + duration > max_time:
             max_time = start_time + duration
-        elif start_time + duration > array_length:
+        # error if we'd go too far
+        if start_time + duration > array_length:
             raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
         # get the target start and end samples

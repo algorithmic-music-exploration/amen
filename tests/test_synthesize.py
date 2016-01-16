@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from nose.tools import assert_raises
 import six
 import pandas as pd
+import numpy as np
 import librosa
 from amen.audio import Audio
 from amen.utils import example_audio_file
 from amen.synthesize import _format_inputs
+from amen.synthesize import synthesize
+from amen.exceptions import SynthesizeError
 
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
@@ -35,9 +39,13 @@ def test_format_inputs_generator():
     formatted_inputs = _format_inputs(the_generator())
     assert(six.next(formatted_inputs) == six.next(the_generator()))
 
-    
-    
-    
-# need to test that synthesize gives back an Audio object
-# need to test that re-synthesizing all of amen.beats is (basically) the same as the input file
-# need to test that it fails if you try to write over 20 minutes of audio
+synthesized_audio = synthesize(audio.timings['beats'])
+def test_synthesize_returns():
+    assert isinstance(synthesized_audio, Audio)
+
+def test_synthesize_sample_output():
+    assert(np.isclose(audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]))
+
+def test_synthesize_fails_if_too_long():
+    time = pd.to_timedelta(21 * 60, unit='s')
+    assert_raises(SynthesizeError, synthesize, ([audio.timings['beats'][5]], [time]))
