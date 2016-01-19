@@ -11,6 +11,16 @@ from amen.time import TimingList
 from amen.exceptions import SynthesizeError
 
 def _format_inputs(inputs):
+    """
+    Organizes inputs to be a list of (TimeSlice, start_time) tuples, 
+    if they are not already of that form.
+    # We may want to update this to support "properly" zipped lists of tuples.
+
+    Acceptable forms are:
+        - A list of TimeSlices - the TimeSlices will be concatenated.
+        - A generator that returns (TimeSlice, start_time).
+        - A tuple of (TimeSlices, start_times).
+    """
     formatted_list = []
     if isinstance(inputs, list):
         time_index = pd.to_timedelta(0.0, 's')
@@ -27,27 +37,18 @@ def _format_inputs(inputs):
 
 def synthesize(inputs):
     """
-    Function to generate new Audios for output or further remixing
+    Generate new Audio objects for output or further remixing.
 
-    This currently takes too many damn things.
-    We eventually get to a list/generator that outputs (TimeSlice, time)
+    Parameters
+    ----------
 
-    synthesize(time_slices)
-    # assumes a single list of time slices, that should play back-to-back.  
-    # it is our job to find the timings and zip them to be a list of (ts, t)
+    inputs: generator, list, or tuple.
+        See _format_inputs for details on parsing inputs.
 
-    synthesize((time_slices, timings))
-    # assumes a tuple of slices and times, as parallel lists.
-    # it is our job zip them
-
-    # should we also support lists of tuples, zipped by the user?  aiii...
-
-    synthesize(some_generator(time_slices))
-    # assumes a generator that returns tuples of slices and times
-
+    Returns
+    ------
+    An Audio object
     """
-
-
     # First we organize our inputs.
     inputs = _format_inputs(inputs)
 

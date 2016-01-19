@@ -36,6 +36,9 @@ class TimeSlice(object):
         return samples, left_offsets, right_offsets
 
     def _get_offsets(self, starting_sample, ending_sample):
+        """
+        Find the offset to the next zero-crossing, in stereo.
+        """
         left_offsets = ()
         right_offsets = ()
         for channel_index in [0, 1]:
@@ -65,6 +68,9 @@ class TimeSlice(object):
         return (left_offsets, right_offsets)
 
     def _offset_samples(self, starting_sample, ending_sample, left_offsets, right_offsets):
+        """
+        Does the offset itself.
+        """
         left_channel = self.audio.raw_samples[0, starting_sample + left_offsets[0] : ending_sample + left_offsets[1]]
         right_channel = self.audio.raw_samples[1, starting_sample + right_offsets[0] : ending_sample + right_offsets[1]]
         return np.array([left_channel, right_channel])
