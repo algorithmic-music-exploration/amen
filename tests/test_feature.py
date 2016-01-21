@@ -19,7 +19,7 @@ audio = Audio(EXAMPLE_FILE)
 
 test_times = np.linspace(0, 10, num=1000)
 test_index = pd.to_timedelta(test_times, unit='s')
-test_data = np.swapaxes(audio.raw_samples[0:1, 0:1000], 0, 1)
+test_data = np.swapaxes(audio.analysis_samples[0:1, 0:1000], 0, 1)
 
 test_dataframe = pd.DataFrame(data=test_data, index=test_index)
 test_feature = Feature(test_dataframe)

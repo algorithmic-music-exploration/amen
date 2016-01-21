@@ -20,6 +20,8 @@ class Audio(object):
             sample rate
         raw_samples: numpy array
             raw samples from the audio
+        analysis_samples: numpy array
+            downsampled samples for analysis
         num_channels: integer
             number of channels of the audio
         duration: float
@@ -28,7 +30,8 @@ class Audio(object):
             collection of named feature objects
     """
 
-    def __init__(self, file_path, convert_to_mono=False, sample_rate=22050):
+    def __init__(self, file_path=None, raw_samples=None, convert_to_mono=False,
+            sample_rate=44100, analysis_sample_rate=22050):
         """
         Audio constructor.
         Opens a file path, loads the audio with librosa, and prepares the features
@@ -38,6 +41,9 @@ class Audio(object):
 
         file_path: string
             path to the audio file to load
+
+        raw_samples: np.array
+            samples to use for audio output
 
         convert_to_mono: boolean
             (optional) converts the file to mono on loading
@@ -50,13 +56,27 @@ class Audio(object):
         ------
         An Audio object
         """
+        if file_path:
+            y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
+        elif raw_samples is not None:
+            y = raw_samples
+            sr = sample_rate
 
         self.file_path = file_path
-        y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
         self.sample_rate = float(sr)
+        self.analysis_sample_rate = float(analysis_sample_rate)
+
         self.raw_samples = y
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
+
+        if y.ndim == 2:
+            left = librosa.resample(y[0], sr, self.analysis_sample_rate)
+            right = librosa.resample(y[1], sr, self.analysis_sample_rate)
+            self.analysis_samples = np.array([left, right])
+        elif y.ndim == 1:
+            self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate)
+
         self.features = self._create_features()
         self.timings = self._create_timings()
         
@@ -64,6 +84,12 @@ class Audio(object):
         file_name = os.path.split(self.file_path)[-1]
         args = file_name, self.duration
         return '<Audio, file: {0:s}, duration: {1:.2f}>'.format(*args)
+
+    def to_wav(self, filename):
+        """
+        Write the samples out to the given filename
+        """
+        librosa.output.write_wav(filename, self.raw_samples, int(self.sample_rate), norm=False)
 
     def _create_timings(self):
         """
@@ -77,9 +103,9 @@ class Audio(object):
         """
         Gets beats using librosa's beat tracker.
         """
-        y_mono = librosa.to_mono(self.raw_samples)
+        y_mono = librosa.to_mono(self.analysis_samples)
         tempo, beat_frames = librosa.beat.beat_track(
-            y=y_mono, sr=self.sample_rate, trim=False)
+            y=y_mono, sr=self.analysis_sample_rate, trim=False)
 
         # convert frames to times
         beat_times = librosa.frames_to_time(beat_frames, sr=self.sample_rate)
@@ -119,7 +145,7 @@ class Audio(object):
         -----
         Feature 
         """
-        mono_samples = librosa.to_mono(self.raw_samples)
+        mono_samples = librosa.to_mono(self.analysis_samples)
         centroids = librosa.feature.spectral_centroid(mono_samples)
         data = self._convert_to_dataframe(centroids, ['spectral_centroid'])
         feature = Feature(data)
@@ -136,7 +162,7 @@ class Audio(object):
         -----
         Feature 
         """
-        mono_samples = librosa.to_mono(self.raw_samples)
+        mono_samples = librosa.to_mono(self.analysis_samples)
         amplitudes = librosa.feature.rmse(mono_samples)
         data = self._convert_to_dataframe(amplitudes, ['amplitude'])
         feature = Feature(data)
