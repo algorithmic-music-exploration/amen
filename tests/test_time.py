@@ -31,14 +31,14 @@ def test_get_offsets():
     faux_audio = Audio(raw_samples=faux_samples)
     time_slice = TimeSlice(t, d, faux_audio)
 
-    left, right = time_slice._get_offsets(3, 4)
+    left, right = time_slice._get_offsets(3, 4, faux_audio.num_channels)
     assert(left == (-1, 1)) 
 
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
 
 def test_offset_samples():
-    res = audio.timings['beats'][0]._offset_samples(1, 2, (-1, 1), (-1, 1))
+    res = audio.timings['beats'][0]._offset_samples(1, 2, (-1, 1), (-1, 1), audio.num_channels)
     assert(res.shape == (2, 3))
 
 samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
