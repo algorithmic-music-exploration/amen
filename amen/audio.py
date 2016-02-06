@@ -66,15 +66,16 @@ class Audio(object):
         self.sample_rate = float(sr)
         self.analysis_sample_rate = float(analysis_sample_rate)
 
-        self.raw_samples = y
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
 
         if y.ndim == 2:
+            self.raw_samples = y
             left = librosa.resample(y[0], sr, self.analysis_sample_rate)
             right = librosa.resample(y[1], sr, self.analysis_sample_rate)
             self.analysis_samples = np.array([left, right])
         elif y.ndim == 1:
+            self.raw_samples = np.array([y])
             self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate)
 
         self.features = self._create_features()

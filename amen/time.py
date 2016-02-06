@@ -29,19 +29,18 @@ class TimeSlice(object):
         duration = self.duration.delta * 1e-9
         starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], self.audio.sample_rate)
 
-        left_offsets, right_offsets = self._get_offsets(starting_sample, ending_sample)
+        left_offsets, right_offsets = self._get_offsets(starting_sample, ending_sample, self.audio.num_channels)
 
-        samples = self._offset_samples(starting_sample, ending_sample, left_offsets, right_offsets)
+        samples = self._offset_samples(starting_sample, ending_sample, left_offsets, right_offsets, self.audio.num_channels)
 
         return samples, left_offsets, right_offsets
 
-    def _get_offsets(self, starting_sample, ending_sample):
+    def _get_offsets(self, starting_sample, ending_sample, num_channels):
         """
-        Find the offset to the next zero-crossing, in stereo.
+        Find the offset to the next zero-crossing, for each channel
         """
-        left_offsets = ()
-        right_offsets = ()
-        for channel_index in [0, 1]:
+        offsets = []
+        for channel_index in range(num_channels):
             channel = self.audio.raw_samples[channel_index]
             zero_crossings = librosa.zero_crossings(channel)
             zero_indexes = np.nonzero(zero_crossings)[0]
@@ -60,19 +59,26 @@ class TimeSlice(object):
                 ending_crossing = zero_indexes[bisect_right(zero_indexes, ending_sample)]
                 ending_offset = ending_crossing - ending_sample
 
-            if channel_index == 0:
-                left_offsets = (starting_offset, ending_offset)
-            elif channel_index == 1:
-                right_offsets = (starting_offset, ending_offset)
+            offsets.append((starting_offset, ending_offset))
 
-        return (left_offsets, right_offsets)
+        if num_channels == 1:
+            results = (offsets[0], offsets[0])
+        elif num_channels == 2:
+            results = (offsets[0], offsets[1])
 
-    def _offset_samples(self, starting_sample, ending_sample, left_offsets, right_offsets):
+        return results
+
+
+    def _offset_samples(self, starting_sample, ending_sample, left_offsets, right_offsets, num_channels):
         """
         Does the offset itself.
         """
         left_channel = self.audio.raw_samples[0, starting_sample + left_offsets[0] : ending_sample + left_offsets[1]]
-        right_channel = self.audio.raw_samples[1, starting_sample + right_offsets[0] : ending_sample + right_offsets[1]]
+        if num_channels == 1:
+            right_channel = left_channel
+        elif num_channels == 2:
+            right_channel = self.audio.raw_samples[1, starting_sample + right_offsets[0] : ending_sample + right_offsets[1]]
+
         return np.array([left_channel, right_channel])
         
 
