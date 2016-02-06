@@ -5,7 +5,7 @@ import types
 import librosa
 import pandas as pd
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import lil_matrix
 from amen.audio import Audio
 from amen.time import TimingList
 from amen.exceptions import SynthesizeError
@@ -56,7 +56,7 @@ def synthesize(inputs):
     sample_rate = 44100
     array_length = 20 * 60 # 20 minutes!
     array_shape = (2, sample_rate * array_length)
-    sparse_array = csr_matrix(array_shape)
+    sparse_array = lil_matrix(array_shape)
 
     initial_offset = 0
     for i, (time_slice, start_time) in enumerate(inputs):
@@ -65,7 +65,7 @@ def synthesize(inputs):
 
         # set the initial offset, so we don't miss the start of the array
         if i == 0:
-            initial_offset = max(left_offsets[0], right_offsets[0]) * -1
+            initial_offset = max(left_offsets[0] * -1, right_offsets[0] * -1)
 
         # get the target start and duration
         start_time = start_time.delta * 1e-9
