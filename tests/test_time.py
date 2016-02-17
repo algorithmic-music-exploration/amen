@@ -6,13 +6,12 @@ import pandas as pd
 import librosa
 from amen.audio import Audio
 from amen.utils import example_audio_file
+from amen.utils import example_mono_audio_file
 from amen.time import TimeSlice
 
 t = 5
 d = 10
 dummy_audio = None
-
-
 time_slice = TimeSlice(t, d, dummy_audio)
 
 def test_time():
@@ -35,33 +34,48 @@ def test_get_offsets():
     assert(left == (-1, 1)) 
 
 EXAMPLE_FILE = example_audio_file()
-audio = Audio(EXAMPLE_FILE)
+stereo_audio = Audio(EXAMPLE_FILE)
+EXAMPLE_MONO_FILE = example_mono_audio_file()
+mono_audio = Audio(EXAMPLE_FILE)
 
 def test_offset_samples():
-    res = audio.timings['beats'][0]._offset_samples(1, 2, (-1, 1), (-1, 1), audio.num_channels)
-    assert(res.shape == (2, 3))
+    def __test():
+        res = audio.timings['beats'][0]._offset_samples(1, 2, (-1, 1), (-1, 1), audio.num_channels)
+        assert(res.shape == (2, 3))
+    for audio in [mono_audio, stereo_audio]:
+        yield __test
 
-samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
 def test_get_samples_shape():
-    duration = audio.timings['beats'][5].duration.delta * 1e-9
-    starting_sample, ending_sample = librosa.time_to_samples([0, duration], audio.sample_rate)
+    def __test():
+        samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
+        duration = audio.timings['beats'][5].duration.delta * 1e-9
+        starting_sample, ending_sample = librosa.time_to_samples([0, duration], audio.sample_rate)
 
-    initial_length = ending_sample -starting_sample
-    left_offset_length = initial_length - left_offset[0] + left_offset[1]
-    right_offset_length = initial_length - right_offset[0] + right_offset[1]
+        initial_length = ending_sample -starting_sample
+        left_offset_length = initial_length - left_offset[0] + left_offset[1]
+        right_offset_length = initial_length - right_offset[0] + right_offset[1]
 
-    assert(len(samples[0]) == left_offset_length)
-    assert(len(samples[1]) == right_offset_length)
+        assert(len(samples[0]) == left_offset_length)
+        assert(len(samples[1]) == right_offset_length)
+
+    for audio in [mono_audio, stereo_audio]:
+        yield __test
+
 
 def test_get_samples_audio():
-    start = left_offset[0] * -1
-    end = len(samples[0]) - left_offset[1]
-    reset_samples = samples[0][start : end]
+    def __test():
+        samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
+        start = left_offset[0] * -1
+        end = len(samples[0]) - left_offset[1]
+        reset_samples = samples[0][start : end]
 
-    start = audio.timings['beats'][5].time.delta * 1e-9
-    duration = audio.timings['beats'][5].duration.delta * 1e-9
-    starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], audio.sample_rate)
-    original_samples = audio.raw_samples[0, starting_sample : ending_sample]
+        start = audio.timings['beats'][5].time.delta * 1e-9
+        duration = audio.timings['beats'][5].duration.delta * 1e-9
+        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], audio.sample_rate)
+        original_samples = audio.raw_samples[0, starting_sample : ending_sample]
 
-    assert(np.array_equiv(reset_samples, original_samples))
+        assert(np.array_equiv(reset_samples, original_samples))
+
+    for audio in [mono_audio, stereo_audio]:
+        yield __test
 
