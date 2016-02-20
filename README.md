@@ -8,6 +8,7 @@ Amen is developed on Ubuntu 14.04 and higher.  OS X is probably workable.  Windo
 Amen is pretty simple, but it stands on top of some complex stuff.
 
 First, you'll need our favorite resampler: `apt-get libsamplerate`.
+
 Then, you'll need to get our own version of it `pip install git+https://github.com/bmcfee/samplerate.git`
 
 Now, if you're a serious Python nerd, you can just get it from pip:  `pip install amen`.
