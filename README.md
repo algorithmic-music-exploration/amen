@@ -1,10 +1,16 @@
 # amen
 A toolbox for algorithmic remixing, after Echo Nest Remix.
 
+# Platforms
+Amen is developed on Ubuntu 14.04 and higher.  OS X is probably workable.  Windows users should install Ubuntu.
+
 # Installation
 Amen is pretty simple, but it stands on top of some complex stuff.
 
-If you're a serious Python nerd, you can just get it from pip:  `pip install amen`.
+First, you'll need our favorite resampler: `apt-get libsamplerate`.
+Then, you'll need to get our own version of it `pip install git+https://github.com/bmcfee/samplerate.git`
+
+Now, if you're a serious Python nerd, you can just get it from pip:  `pip install amen`.
 
 If not, read on for faster, more user-friendly installation process.
 
@@ -16,8 +22,6 @@ Then, install via pip:  `pip install amen`.
 After installation is finished, run `python amen/examples/reverse.py amen/examples/audio/amen./wav`.
 Play the resulting `reversed.wav` file, and you're on your way!
 
-# Platforms
-Amen is developed on Ubuntu 14.04 and higher.  OS X is probably workable.  Windows users should install Ubuntu.
 
 # Contributing
 Welcome aboard!  Please see CONTRIBUTING.md, or open an issue if things don't work right.
