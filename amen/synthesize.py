@@ -60,7 +60,8 @@ def synthesize(inputs):
 
     initial_offset = 0
     for i, (time_slice, start_time) in enumerate(inputs):
-        # get the actual, zero-corrected audio and the offsets
+        # get the actual, zero-corrected audio and the offsets.
+        # if we have a mono file, we return stereo here.
         resampled_audio, left_offsets, right_offsets = time_slice.get_samples()
 
         # set the initial offset, so we don't miss the start of the array
