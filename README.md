@@ -20,8 +20,22 @@ First, you should install Anaconda, (https://www.continuum.io/downloads) which w
 Then, install via pip:  `pip install amen`.
 
 # Testing the Installation
-After installation is finished, run `python amen/examples/reverse.py amen/examples/audio/amen./wav`.
-Play the resulting `reversed.wav` file, and you're on your way!
+After installation is finished, open up a Python interpreter and run the following (or run it from a file):
+```
+from amen.audio import Audio
+from amen.synthesize import synthesize
+
+audio_file <PATH_TO_YOUR_AUDIO_FILE>
+audio = Audio(audio_file)
+
+beats = audio.timings['beats']
+beats.reverse()
+
+out = synthesize(beats)
+out.to_wav('reversed.wav')
+```
+
+If all that works, you just need to play the resulting `reversed.wav` file, and you're on your way!
 
 # Contributing
 Welcome aboard!  Please see CONTRIBUTING.md, or open an issue if things don't work right.
