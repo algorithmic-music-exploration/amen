@@ -112,9 +112,9 @@ class Audio(object):
         beat_frames = librosa.util.fix_frames(beat_frames,
                                               x_min=0,
                                               x_max=librosa.time_to_frames(self.duration,
-                                                  sr=self.sample_rate))
+                                                  sr=self.analysis_sample_rate))
         # convert frames to times
-        beat_times = librosa.frames_to_time(beat_frames, sr=self.sample_rate)
+        beat_times = librosa.frames_to_time(beat_frames, sr=self.analysis_sample_rate)
 
         # make the list of (start, duration) tuples that TimingList expects
         starts_durs = [(s, t-s) for (s,t) in zip(beat_times, beat_times[1:])]

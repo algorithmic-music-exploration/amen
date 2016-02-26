@@ -80,17 +80,17 @@ def synthesize(inputs):
             raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
         # get the target start and end samples
-        starting_sample, ending_sample = librosa.time_to_samples([start_time, start_time + duration], sr=time_slice.audio.sample_rate)
+        starting_sample, ending_sample = librosa.time_to_samples([start_time,
+                                                                  start_time + duration],
+                                                                  sr=time_slice.audio.sample_rate)
 
         # figure out the actual starting and ending samples for each channel
         left_start = starting_sample + left_offsets[0] + initial_offset
-        left_end = ending_sample + left_offsets[1] + initial_offset
         right_start = starting_sample + right_offsets[0] + initial_offset
-        right_end = ending_sample + right_offsets[1] + initial_offset
 
         # add the data from each channel to the array
-        sparse_array[0, left_start:left_end] += resampled_audio[0]
-        sparse_array[1, right_start:right_end] += resampled_audio[1]
+        sparse_array[0, left_start:left_start+len(resampled_audio[0])] += resampled_audio[0]
+        sparse_array[1, right_start:right_start+len(resampled_audio[1])] += resampled_audio[1]
 
     max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
     truncated_array = sparse_array[:, 0:max_samples].toarray()
