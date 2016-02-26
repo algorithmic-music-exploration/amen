@@ -111,7 +111,8 @@ class Audio(object):
         # pad beat times to full duration
         beat_frames = librosa.util.fix_frames(beat_frames,
                                               x_min=0,
-                                              x_max=int(self.duration * self.sample_rate))
+                                              x_max=librosa.time_to_frames(self.duration,
+                                                  sr=self.sample_rate))
         # convert frames to times
         beat_times = librosa.frames_to_time(beat_frames, sr=self.sample_rate)
 

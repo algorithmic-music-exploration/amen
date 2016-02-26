@@ -15,6 +15,7 @@ audio = Audio(audio_file)
 
 beats = audio.timings['beats']
 beats.reverse()
+print(beats[:10])
 
 out = synthesize(beats)
 out.to_wav('reversed.wav')
