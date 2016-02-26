@@ -22,10 +22,11 @@ Then, install via pip:  `pip install amen`.
 # Testing the Installation
 After installation is finished, open up a Python interpreter and run the following (or run it from a file):
 ```
+from amen.utils import example_audio_file
 from amen.audio import Audio
 from amen.synthesize import synthesize
 
-audio_file <PATH_TO_YOUR_AUDIO_FILE>
+audio_file = example_audio_file()
 audio = Audio(audio_file)
 
 beats = audio.timings['beats']
