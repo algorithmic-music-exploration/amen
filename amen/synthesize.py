@@ -62,11 +62,11 @@ def synthesize(inputs):
     for i, (time_slice, start_time) in enumerate(inputs):
         # get the actual, zero-corrected audio and the offsets.
         # if we have a mono file, we return stereo here.
-        resampled_audio, left_offsets, right_offsets = time_slice.get_samples()
+        resampled_audio, left_offset, right_offset = time_slice.get_samples()
 
         # set the initial offset, so we don't miss the start of the array
         if i == 0:
-            initial_offset = max(left_offsets[0] * -1, right_offsets[0] * -1)
+            initial_offset = max(left_offset * -1, right_offset * -1)
 
         # get the target start and duration
         start_time = start_time.delta * 1e-9
@@ -85,12 +85,12 @@ def synthesize(inputs):
                                                                   sr=time_slice.audio.sample_rate)
 
         # figure out the actual starting and ending samples for each channel
-        left_start = starting_sample + left_offsets[0] + initial_offset
-        right_start = starting_sample + right_offsets[0] + initial_offset
+        left_start = starting_sample + left_offset + initial_offset
+        right_start = starting_sample + right_offset + initial_offset
 
         # add the data from each channel to the array
-        sparse_array[0, left_start:left_start+len(resampled_audio[0])] += resampled_audio[0]
-        sparse_array[1, right_start:right_start+len(resampled_audio[1])] += resampled_audio[1]
+        sparse_array[0, left_start:left_start + len(resampled_audio[0])] += resampled_audio[0]
+        sparse_array[1, right_start:right_start + len(resampled_audio[1])] += resampled_audio[1]
 
     max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
     truncated_array = sparse_array[:, 0:max_samples].toarray()

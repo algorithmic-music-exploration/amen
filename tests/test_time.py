@@ -47,13 +47,21 @@ def test_offset_samples():
 
 def test_get_samples_shape():
     def __test():
-        samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
-        duration = audio.timings['beats'][5].duration.delta * 1e-9
+        beat = audio.timings['beats'][0]
+
+        start = beat.time.delta * 1e-9
+        duration = beat.duration.delta * 1e-9
+        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], beat.audio.sample_rate)
+
+        samples, left_offset, right_offset  = beat.get_samples()
+        left_offsets, right_offsets = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
+
+        duration = beat.duration.delta * 1e-9
         starting_sample, ending_sample = librosa.time_to_samples([0, duration], audio.sample_rate)
 
-        initial_length = ending_sample -starting_sample
-        left_offset_length = initial_length - left_offset[0] + left_offset[1]
-        right_offset_length = initial_length - right_offset[0] + right_offset[1]
+        initial_length = ending_sample - starting_sample
+        left_offset_length = initial_length - left_offsets[0] + left_offsets[1]
+        right_offset_length = initial_length - right_offsets[0] + right_offsets[1]
 
         assert(len(samples[0]) == left_offset_length)
         assert(len(samples[1]) == right_offset_length)
@@ -64,14 +72,18 @@ def test_get_samples_shape():
 
 def test_get_samples_audio():
     def __test():
-        samples, left_offset, right_offset  = audio.timings['beats'][5].get_samples()
-        start = left_offset[0] * -1
-        end = len(samples[0]) - left_offset[1]
-        reset_samples = samples[0][start : end]
+        beat = audio.timings['beats'][0]
+        samples, left_offset, right_offset = beat.get_samples()
 
-        start = audio.timings['beats'][5].time.delta * 1e-9
-        duration = audio.timings['beats'][5].duration.delta * 1e-9
-        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], audio.sample_rate)
+        start = beat.time.delta * 1e-9
+        duration = beat.duration.delta * 1e-9
+        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], beat.audio.sample_rate)
+        left_offsets, right_offsets = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
+
+        start_sample = left_offsets[0] * -1
+        end_sample = len(samples[0]) - left_offsets[1]
+        reset_samples = samples[0][start_sample : end_sample]
+
         original_samples = audio.raw_samples[0, starting_sample : ending_sample]
 
         assert(np.array_equiv(reset_samples, original_samples))

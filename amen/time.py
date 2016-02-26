@@ -33,7 +33,7 @@ class TimeSlice(object):
 
         samples = self._offset_samples(starting_sample, ending_sample, left_offsets, right_offsets, self.audio.num_channels)
 
-        return samples, left_offsets, right_offsets
+        return samples, left_offsets[0], right_offsets[0]
 
     def _get_offsets(self, starting_sample, ending_sample, num_channels):
         """
