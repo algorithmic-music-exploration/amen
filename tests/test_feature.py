@@ -38,6 +38,9 @@ def test_default_aggregate():
 def test_default_base():
     assert(test_feature.base == None)
 
+def test_default_name():
+    assert(test_feature.name == test_dataframe.keys()[0])
+
 def test_aggregate():
     test_feature = Feature(test_dataframe, aggregate=np.median)
     assert(test_feature.aggregate == np.median)
@@ -49,6 +52,19 @@ def test_base():
 
 def test_base_validation():
     assert_raises(AssertionError, Feature, test_dataframe, np.mean, [1, 2, 3])
+
+# Test __iter__
+def test_iter():
+    looped_data = []
+    for d in test_feature:
+        looped_data.append(d)
+    assert(looped_data == test_feature.data[test_feature.name].tolist())
+
+# Test __repr__
+def test_repr():
+    repr_string = '<Feature, {0}>'.format((test_feature.name))
+    print repr_string
+    assert(test_feature.__repr__() == repr_string)
 
 
 # Test at()

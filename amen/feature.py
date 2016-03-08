@@ -41,16 +41,11 @@ class Feature(object):
         self.data = data
         self.aggregate = aggregate
         # Not sure that this is the right way to do it - I feel like we're outsmarting pandas
-        # pandas supports multiple keys in a dataframe.
+        # pandas supports multiple keys in a dataframe, whereas this only allows one.
         # Should we replace featurecollection with something like that?
         self.name = data.keys()[0]
 
         if base is not None:
-            print type(base)
-            print base
-            print base.data, base.aggregate, base.base, base.name
-            print isinstance(base, Feature)
-            print isinstance(base, TimeSlice)
             assert isinstance(base, Feature)
 
         self.base = base
@@ -63,7 +58,7 @@ class Feature(object):
             yield d
         
     def __repr__(self):
-        args =(self.name)
+        args = (self.name)
         return '<Feature, {0}>'.format(args)
         
     def at(self, time_slices):
