@@ -144,7 +144,7 @@ class FeatureCollection(dict):
         length = len(self[key])
         for i in range(length):
             res = {}
-            for key, feature in self.iteritems():
+            for key, feature in self.items():
                 res[key] = feature.data[feature.name][i]
             yield res
 

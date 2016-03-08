@@ -116,7 +116,7 @@ def test_iter():
     length = len(test_feature)
     for i in range(length):
         res = {}
-        for key, feature in feature_collection.iteritems():
+        for key, feature in feature_collection.items():
             res[key] = feature.data[feature.name][i]
             test_data.append(res)
         assert(res == looped_data[i])
