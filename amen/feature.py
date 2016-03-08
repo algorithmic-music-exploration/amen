@@ -68,6 +68,9 @@ class Feature(object):
         return self.data[self.name][x]
 
     def __len__(self):
+        """
+        Wrapper to allow easy access to the internal data of the pandas dataframe
+        """
         return len(self.data[self.name])
         
         
@@ -140,10 +143,16 @@ class FeatureCollection(dict):
         length = len(self[self.keys()[0]])
         for i in range(length):
             res = {}
-            for key in self.keys():
-                feature = self[key]
+            for key, feature in self.iteritems():
                 res[key] = feature.data[feature.name][i]
             yield res
+
+    def __len__(self):
+        """
+        Wrapper to avoid making the user deal with parallel lists
+        """
+        feature = self[self.keys()[0]]
+        return len(feature)
 
 
     def get(self, keys):

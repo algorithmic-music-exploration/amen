@@ -121,6 +121,10 @@ def test_iter():
             test_data.append(res)
         assert(res == looped_data[i])
 
+def test_len():
+    length = len(feature_collection[feature_collection.keys()[0]])
+    assert(len(feature_collection) == length)
+
 def test_at():
     feature_collection_at = feature_collection.at(time_slices)
     assert(feature_collection_at['test'].data.loc[test_slice.time].all() == target_data.all())
