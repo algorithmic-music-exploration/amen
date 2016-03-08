@@ -40,15 +40,31 @@ class Feature(object):
 
         self.data = data
         self.aggregate = aggregate
+        # Not sure that this is the right way to do it - I feel like we're outsmarting pandas
+        # pandas supports multiple keys in a dataframe.
+        # Should we replace featurecollection with something like that?
+        self.name = data.keys()[0]
 
         if base is not None:
+            print type(base)
+            print base
+            print base.data, base.aggregate, base.base, base.name
+            print isinstance(base, Feature)
+            print isinstance(base, TimeSlice)
             assert isinstance(base, Feature)
 
         self.base = base
+
+    def __iter__(self):
+        """
+        Wrapper to allow easy access to the internal data of the pandas dataframe
+        """
+        for d in self.data[self.name]:
+            yield d
         
     def __repr__(self):
-        # Would be nice for us to pass a name in here, one day
-        return '<Feature>'
+        args =(self.name)
+        return '<Feature, {0}>'.format(args)
         
     def at(self, time_slices):
         """
