@@ -122,7 +122,8 @@ def test_iter():
         assert(res == looped_data[i])
 
 def test_len():
-    length = len(feature_collection[feature_collection.keys()[0]])
+    key = list(feature_collection.keys())[0]
+    length = len(feature_collection[key])
     assert(len(feature_collection) == length)
 
 def test_at():

@@ -140,7 +140,8 @@ class FeatureCollection(dict):
         """
         Wrapper to avoid making the user deal with parallel lists
         """
-        length = len(self[self.keys()[0]])
+        key = list(self.keys())[0]
+        length = len(self[key])
         for i in range(length):
             res = {}
             for key, feature in self.iteritems():
@@ -151,7 +152,8 @@ class FeatureCollection(dict):
         """
         Wrapper to avoid making the user deal with parallel lists
         """
-        feature = self[self.keys()[0]]
+        key = list(self.keys())[0]
+        feature = self[key]
         return len(feature)
 
 
