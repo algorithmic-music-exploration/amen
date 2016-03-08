@@ -56,6 +56,9 @@ class Feature(object):
         """
         for d in self.data[self.name]:
             yield d
+
+    def __getitem__(self, x):
+        return self.data[self.name][x]
         
     def __repr__(self):
         args = (self.name)

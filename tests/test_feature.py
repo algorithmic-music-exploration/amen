@@ -53,12 +53,15 @@ def test_base():
 def test_base_validation():
     assert_raises(AssertionError, Feature, test_dataframe, np.mean, [1, 2, 3])
 
-# Test __iter__
+# Test list wrappers
 def test_iter():
     looped_data = []
     for d in test_feature:
         looped_data.append(d)
     assert(looped_data == test_feature.data[test_feature.name].tolist())
+
+def test_getitem():
+    assert(test_feature[0] == test_feature.data[test_feature.name][0])
 
 # Test __repr__
 def test_repr():
