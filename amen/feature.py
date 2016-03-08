@@ -50,6 +50,10 @@ class Feature(object):
 
         self.base = base
 
+    def __repr__(self):
+        args = (self.name)
+        return '<Feature, {0}>'.format(args)
+
     def __iter__(self):
         """
         Wrapper to allow easy access to the internal data of the pandas dataframe
@@ -58,11 +62,14 @@ class Feature(object):
             yield d
 
     def __getitem__(self, x):
+        """
+        Wrapper to allow easy access to the internal data of the pandas dataframe
+        """
         return self.data[self.name][x]
+
+    def __len__(self):
+        return len(self.data[self.name])
         
-    def __repr__(self):
-        args = (self.name)
-        return '<Feature, {0}>'.format(args)
         
     def at(self, time_slices):
         """
@@ -125,6 +132,19 @@ class FeatureCollection(dict):
         for key in self.keys():
             new_features[key] = self[key].at(time_slices)
         return new_features
+
+    def __iter__(self):
+        """
+        Wrapper to avoid making the user deal with parallel lists
+        """
+        length = len(self[self.keys()[0]])
+        for i in range(length):
+            res = {}
+            for key in self.keys():
+                feature = self[key]
+                res[key] = feature.data[feature.name][i]
+            yield res
+
 
     def get(self, keys):
         """

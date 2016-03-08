@@ -66,7 +66,6 @@ def test_getitem():
 # Test __repr__
 def test_repr():
     repr_string = '<Feature, {0}>'.format((test_feature.name))
-    print repr_string
     assert(test_feature.__repr__() == repr_string)
 
 
@@ -107,6 +106,20 @@ def test_with_single_slice():
 feature_collection = FeatureCollection()
 feature_collection['test'] = test_feature
 feature_collection['another_test'] = test_feature
+
+def test_iter():
+    looped_data = []
+    for data in feature_collection:
+        looped_data.append(data)
+
+    test_data = []
+    length = len(test_feature)
+    for i in range(length):
+        res = {}
+        for key, feature in feature_collection.iteritems():
+            res[key] = feature.data[feature.name][i]
+            test_data.append(res)
+        assert(res == looped_data[i])
 
 def test_at():
     feature_collection_at = feature_collection.at(time_slices)
