@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from amen.time import TimeSlice
+from amen.exceptions import FeatureError
 
 class Feature(object):
     """
@@ -18,7 +19,7 @@ class Feature(object):
     at(time_slices)
         Resample the feature at the given TimeSlices
     """
-    def __init__(self, data, aggregate=np.mean, base=None):
+    def __init__(self, data, aggregate=np.mean, base=None, time_slices=None):
         """
         Constructor for feature object
 
@@ -40,6 +41,7 @@ class Feature(object):
 
         self.data = data
         self.aggregate = aggregate
+        self.time_slices = time_slices
         # Not sure that this is the right way to do it - I feel like we're outsmarting pandas
         # pandas supports multiple keys in a dataframe, whereas this only allows one.
         # Should we replace featurecollection with something like that?
@@ -72,6 +74,13 @@ class Feature(object):
         Wrapper to allow easy access to the internal data of the pandas dataframe
         """
         return len(self.data[self.name])
+
+    def with_time(self):
+        if self.time_slices is None:
+            raise FeatureError("Feature has no time reference.")
+
+        for i, d in enumerate(self.data[self.name]):
+            yield (self.time_slices[i], d)
         
         
     def at(self, time_slices):
@@ -105,7 +114,7 @@ class Feature(object):
             timed_data.loc[sl.time] = self.aggregate(self.data[slice_index], axis=0)
 
         # return the new feature object
-        return Feature(data=timed_data, aggregate=self.aggregate, base=self)
+        return Feature(data=timed_data, aggregate=self.aggregate, base=self, time_slices=time_slices)
 
 
 class FeatureCollection(dict):
