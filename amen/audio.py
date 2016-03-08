@@ -131,12 +131,13 @@ class Audio(object):
         Returns
         -----
         FeatureCollection
-            FeatureCollection with each Amen.Feature object named correctly
+            FeatureCollection with each Amen.Feature object named correctly.
+            Note that _get_chroma returns a FeatureCollection of chroma features.
         """
         features = FeatureCollection()
         features['centroid'] = self._get_centroid()
         features['amplitude'] = self._get_amplitude()
-        # features['chroma'] = self._get_chroma() # Should return a feature collection, I think?  I think this "just works", as they say
+        features['chroma'] = self._get_chroma()
         return features
 
     def _get_centroid(self):
