@@ -44,7 +44,7 @@ class Feature(object):
         self.time_slices = time_slices
         # Not sure that this is the right way to do it - I feel like we're outsmarting pandas
         # pandas supports multiple keys in a dataframe, whereas this only allows one.
-        # Should we replace featurecollection with something like that?
+        # Should we replace FeatureCollection with something like that?
         self.name = data.keys()[0]
 
         if base is not None:
@@ -165,6 +165,19 @@ class FeatureCollection(dict):
         feature = self[key]
         return len(feature)
 
+    def with_time(self):
+        key = list(self.keys())[0]
+        length = len(self[key])
+        time_slices = self[key].time_slices
+
+        if time_slices is None:
+            raise FeatureError("FeatureCollection has no time reference.")
+
+        for i in range(length):
+            res = {}
+            for key, feature in self.items():
+                res[key] = feature.data[feature.name][i]
+            yield (time_slices[i], res)
 
     def get(self, keys):
         """

@@ -13,6 +13,7 @@ from amen.feature import Feature
 from amen.feature import FeatureCollection
 from amen.time import TimeSlice
 from amen.utils import example_audio_file
+from amen.exceptions import FeatureError
 
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
@@ -68,7 +69,6 @@ def test_repr():
     repr_string = '<Feature, {0}>'.format((test_feature.name))
     assert(test_feature.__repr__() == repr_string)
 
-
 # Test at()
 time_slices = [TimeSlice(0, 0.5, audio), TimeSlice(1, 0.5, audio)]
 feature_at = test_feature.at(time_slices)
@@ -101,6 +101,29 @@ def test_base_with_second_resample():
 def test_with_single_slice():
     feature_at = test_feature.at(time_slices[0])
     assert(len(feature_at.data) == 1)
+
+# Test with_time
+def test_with_time_raises():
+    def test():
+        for beat, feature in test_feature.with_time():
+            pass
+    assert_raises(FeatureError, test)
+
+def test_with_time_beats():
+    beats = []
+    for beat, feature in feature_at.with_time():
+        beats.append(beat)
+    assert(beats == time_slices)
+
+def test_with_time_features():
+    looped_features = []
+    for feature in feature_at:
+        looped_features.append(feature)
+
+    features = []
+    for beat, feature in feature_at.with_time():
+        features.append(feature)
+    assert(features == looped_features)
 
 # Test FeatureCollection
 feature_collection = FeatureCollection()
@@ -140,3 +163,27 @@ def test_get_with_list():
     new_feature_collection = feature_collection.get(['another_test'])
     assert(list(new_feature_collection.keys()) == ['another_test'])
 
+# Test with_time
+def test_feature_collection_with_time_raises():
+    def test():
+        for beat, feature in feature_collection.with_time():
+            pass
+    assert_raises(FeatureError, test)
+
+def test_feature_collection_with_time_beats():
+    feature_collection_at = feature_collection.at(time_slices)
+    beats = []
+    for beat, feature in feature_collection_at.with_time():
+        beats.append(beat)
+    assert(beats == time_slices)
+
+def test_feature_collection_with_time_features():
+    feature_collection_at = feature_collection.at(time_slices)
+    looped_features = []
+    for feature in feature_collection_at:
+        looped_features.append(feature)
+
+    features = []
+    for beat, feature in feature_collection_at.with_time():
+        features.append(feature)
+    assert(features == looped_features)
