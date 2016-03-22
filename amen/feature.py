@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from amen.time import TimeSlice
+from amen.exceptions import FeatureError
 
 class Feature(object):
     """
@@ -18,7 +19,7 @@ class Feature(object):
     at(time_slices)
         Resample the feature at the given TimeSlices
     """
-    def __init__(self, data, aggregate=np.mean, base=None):
+    def __init__(self, data, aggregate=np.mean, base=None, time_slices=None):
         """
         Constructor for feature object
 
@@ -40,15 +41,47 @@ class Feature(object):
 
         self.data = data
         self.aggregate = aggregate
+        self.time_slices = time_slices
+        # Not sure that this is the right way to do it - I feel like we're outsmarting pandas
+        # pandas supports multiple keys in a dataframe, whereas this only allows one.
+        # Should we replace FeatureCollection with something like that?
+        self.name = data.keys()[0]
 
         if base is not None:
             assert isinstance(base, Feature)
 
         self.base = base
-        
+
     def __repr__(self):
-        # Would be nice for us to pass a name in here, one day
-        return '<Feature>'
+        args = (self.name)
+        return '<Feature, {0}>'.format(args)
+
+    def __iter__(self):
+        """
+        Wrapper to allow easy access to the internal data of the pandas dataframe
+        """
+        for d in self.data[self.name]:
+            yield d
+
+    def __getitem__(self, x):
+        """
+        Wrapper to allow easy access to the internal data of the pandas dataframe
+        """
+        return self.data[self.name][x]
+
+    def __len__(self):
+        """
+        Wrapper to allow easy access to the internal data of the pandas dataframe
+        """
+        return len(self.data[self.name])
+
+    def with_time(self):
+        if self.time_slices is None:
+            raise FeatureError("Feature has no time reference.")
+
+        for i, d in enumerate(self.data[self.name]):
+            yield (self.time_slices[i], d)
+        
         
     def at(self, time_slices):
         """
@@ -81,7 +114,7 @@ class Feature(object):
             timed_data.loc[sl.time] = self.aggregate(self.data[slice_index], axis=0)
 
         # return the new feature object
-        return Feature(data=timed_data, aggregate=self.aggregate, base=self)
+        return Feature(data=timed_data, aggregate=self.aggregate, base=self, time_slices=time_slices)
 
 
 class FeatureCollection(dict):
@@ -111,6 +144,40 @@ class FeatureCollection(dict):
         for key in self.keys():
             new_features[key] = self[key].at(time_slices)
         return new_features
+
+    def __iter__(self):
+        """
+        Wrapper to avoid making the user deal with parallel lists
+        """
+        key = list(self.keys())[0]
+        length = len(self[key])
+        for i in range(length):
+            res = {}
+            for key, feature in self.items():
+                res[key] = feature.data[feature.name][i]
+            yield res
+
+    def __len__(self):
+        """
+        Wrapper to avoid making the user deal with parallel lists
+        """
+        key = list(self.keys())[0]
+        feature = self[key]
+        return len(feature)
+
+    def with_time(self):
+        key = list(self.keys())[0]
+        length = len(self[key])
+        time_slices = self[key].time_slices
+
+        if time_slices is None:
+            raise FeatureError("FeatureCollection has no time reference.")
+
+        for i in range(length):
+            res = {}
+            for key, feature in self.items():
+                res[key] = feature.data[feature.name][i]
+            yield (time_slices[i], res)
 
     def get(self, keys):
         """
