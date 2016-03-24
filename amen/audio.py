@@ -193,6 +193,14 @@ class Audio(object):
         for chroma, pitch in zip(chroma_cq, pitch_names):
             data = self._convert_to_dataframe(chroma, [pitch])
             feature[pitch] = Feature(data)
+
+        # Enharmonic aliases
+        feature['db'] = feature['c#']
+        feature['d#'] = feature['eb']
+        feature['gb'] = feature['f#']
+        feature['g#'] = feature['ab']
+        feature['a#'] = feature['bb']
+
         return feature 
 
     def _convert_to_dataframe(self, feature_data, columns):
