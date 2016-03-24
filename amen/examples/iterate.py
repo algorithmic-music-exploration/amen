@@ -2,7 +2,7 @@
 # encoding: utf=8
 
 """
-reverse.py : Reverse the beats of a song.
+iterate.py : Iterate through the beats of a song, and keep some, but not others
 """
 
 import sys
@@ -14,8 +14,10 @@ audio_file = example_audio_file()
 audio = Audio(audio_file)
 
 beats = audio.timings['beats']
-beats.reverse()
+new_beats = []
+for i, beat in enumerate(beats):
+    if i % 4 == 0:
+        new_beats.append(beat)
 
-out = synthesize(beats)
-out.to_wav('reversed.wav')
-
+out = synthesize(new_beats)
+out.to_wav('iterate.wav')
