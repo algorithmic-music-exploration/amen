@@ -131,11 +131,13 @@ class Audio(object):
         Returns
         -----
         FeatureCollection
-            FeatureCollection with each Amen.Feature object named correctly
+            FeatureCollection with each Amen.Feature object named correctly.
+            Note that _get_chroma returns a FeatureCollection of chroma features.
         """
         features = FeatureCollection()
         features['centroid'] = self._get_centroid()
         features['amplitude'] = self._get_amplitude()
+        features['chroma'] = self._get_chroma()
         return features
 
     def _get_centroid(self):
@@ -171,6 +173,35 @@ class Audio(object):
         data = self._convert_to_dataframe(amplitudes, ['amplitude'])
         feature = Feature(data)
         return feature
+
+    def _get_chroma(self):
+        """
+        Gets chroma data from librosa, and returns it as a FeatureCollection,
+        with 12 features.
+
+        Parameters
+        ---------
+
+        Returns
+        -----
+        FeatureCollection
+        """
+        feature = FeatureCollection()
+        mono_samples = librosa.to_mono(self.analysis_samples)
+        pitch_names = ['c', 'c#', 'd', 'eb', 'e', 'f', 'f#', 'g', 'ab', 'a', 'bb', 'b']
+        chroma_cq = librosa.feature.chroma_cqt(mono_samples)
+        for chroma, pitch in zip(chroma_cq, pitch_names):
+            data = self._convert_to_dataframe(chroma, [pitch])
+            feature[pitch] = Feature(data)
+
+        # Enharmonic aliases
+        feature['db'] = feature['c#']
+        feature['d#'] = feature['eb']
+        feature['gb'] = feature['f#']
+        feature['g#'] = feature['ab']
+        feature['a#'] = feature['bb']
+
+        return feature 
 
     def _convert_to_dataframe(self, feature_data, columns):
         """
