@@ -76,6 +76,9 @@ class Feature(object):
         return len(self.data[self.name])
 
     def with_time(self):
+        """
+        Allows iteration over a time-indexed feature and the associated timeslices.
+        """
         if self.time_slices is None:
             raise FeatureError("Feature has no time reference.")
 
@@ -166,6 +169,9 @@ class FeatureCollection(dict):
         return len(feature)
 
     def with_time(self):
+        """
+        Allows iteration over a time-indexed feature and the associated timeslices.
+        """
         key = list(self.keys())[0]
         length = len(self[key])
         time_slices = self[key].time_slices
