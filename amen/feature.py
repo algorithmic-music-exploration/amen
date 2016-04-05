@@ -172,7 +172,6 @@ class FeatureCollection(dict):
         """
         Allows iteration over a time-indexed feature and the associated timeslices.
         """
-        if self.time_slices is None:
         key = list(self.keys())[0]
         length = len(self[key])
         time_slices = self[key].time_slices
