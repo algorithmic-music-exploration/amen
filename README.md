@@ -38,6 +38,10 @@ out.to_wav('reversed.wav')
 
 If all that works, you just need to play the resulting `reversed.wav` file, and you're on your way!
 
+# Examples
+
+We've got a few other examples in the `examples` folder - most involve editing a file based on the audio features thereof.  We'll try to add more as we go.
+
 # Contributing
 Welcome aboard!  Please see CONTRIBUTING.md, or open an issue if things don't work right.
 
