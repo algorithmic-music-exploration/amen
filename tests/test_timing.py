@@ -24,14 +24,29 @@ def test_units():
     time_slice = TimeSlice(t, d, dummy_audio, unit='ms')
     assert(time_slice.time == pd.to_timedelta(t, 'ms'))
 
-def test_get_offsets():
-    faux_samples = np.array([[1,-1, 0, 1, 0, -1, 1],
-                             [1, -1, 0, 1, 0, -1, 1]])
-    faux_audio = Audio(raw_samples=faux_samples)
-    time_slice = TimeSlice(t, d, faux_audio)
 
+faux_samples = np.array([[1,-1, 0, 1, 0, -1, 1],
+                         [1, -1, 0, 1, 0, -1, 1]])
+faux_audio = Audio(raw_samples=faux_samples)
+time_slice = TimeSlice(t, d, faux_audio)
+
+def test_get_offsets():
     left, right, zero_indexes = time_slice._get_offsets(3, 4, faux_audio.num_channels)
     assert(left == (-1, 1)) 
+
+def test_get_offsets_no_zero_indexes():
+    zero_index = np.array([0, 1, 2, 5, 6])
+    real_zero_indexes = [zero_index, zero_index]
+
+    left, right, zero_indexes = time_slice._get_offsets(3, 4, faux_audio.num_channels)
+    assert(zero_indexes[0].all() == real_zero_indexes[0].all())
+
+def test_get_offsets_with_zero_indexes():
+    fake = np.array([1, 2, 3])
+    faux_zero_indexes = [fake, fake]
+
+    left, right, zero_indexes = time_slice._get_offsets(3, 4, faux_audio.num_channels, faux_zero_indexes)
+    assert(zero_indexes == faux_zero_indexes)
 
 EXAMPLE_FILE = example_audio_file()
 stereo_audio = Audio(EXAMPLE_FILE)
