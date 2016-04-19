@@ -7,7 +7,7 @@ import librosa
 from amen.audio import Audio
 from amen.utils import example_audio_file
 from amen.utils import example_mono_audio_file
-from amen.time import TimeSlice
+from amen.timing import TimeSlice
 
 t = 5
 d = 10

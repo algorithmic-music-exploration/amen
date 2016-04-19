@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import six
 from bisect import bisect_left
 from bisect import bisect_right
@@ -42,8 +43,12 @@ class TimeSlice(object):
         offsets = []
         for channel_index in range(num_channels):
             channel = self.audio.raw_samples[channel_index]
+            
+            then = time.time()
             zero_crossings = librosa.zero_crossings(channel)
             zero_indexes = np.nonzero(zero_crossings)[0]
+            now = time.time()
+            print "zero crossings", now - then
 
             index = bisect_left(zero_indexes, starting_sample) - 1
             if index < 0:

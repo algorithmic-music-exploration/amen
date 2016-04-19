@@ -11,7 +11,8 @@ from amen.utils import example_audio_file
 from amen.synthesize import synthesize
 
 audio_file = example_audio_file()
-audio = Audio(audio_file)
+#audio = Audio(audio_file)
+audio = Audio("../../Desktop/onefourfiveone.mp3")
 
 beats = audio.timings['beats']
 beats.reverse()

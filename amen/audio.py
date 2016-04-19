@@ -8,7 +8,7 @@ import numpy as np
 
 from amen.feature import Feature
 from amen.feature import FeatureCollection
-from amen.time import TimingList
+from amen.timing import TimingList
 
 class Audio(object):
     """

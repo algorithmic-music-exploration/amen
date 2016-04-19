@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import time
 import types
 import librosa
 import pandas as pd
 import numpy as np
 from scipy.sparse import lil_matrix
 from amen.audio import Audio
-from amen.time import TimingList
+from amen.timing import TimingList
 from amen.exceptions import SynthesizeError
 
 def _format_inputs(inputs):
@@ -50,7 +50,12 @@ def synthesize(inputs):
     An Audio object
     """
     # First we organize our inputs.
+    then = time.time() 
     inputs = _format_inputs(inputs)
+
+    now = time.time()
+    print "done formatting inputs", now - then
+    then = now
 
     max_time = 0.0
     sample_rate = 44100
@@ -58,11 +63,18 @@ def synthesize(inputs):
     array_shape = (2, sample_rate * array_length)
     sparse_array = lil_matrix(array_shape)
 
+    now = time.time()
+    print "done making sparse matrix", now - then
+    then = now
+
     initial_offset = 0
     for i, (time_slice, start_time) in enumerate(inputs):
         # get the actual, zero-corrected audio and the offsets.
         # if we have a mono file, we return stereo here.
         resampled_audio, left_offset, right_offset = time_slice.get_samples()
+        now = time.time()
+        print "done getting samples for this chunk", now - then
+        then = now
 
         # set the initial offset, so we don't miss the start of the array
         if i == 0:
@@ -91,8 +103,18 @@ def synthesize(inputs):
         # add the data from each channel to the array
         sparse_array[0, left_start:left_start + len(resampled_audio[0])] += resampled_audio[0]
         sparse_array[1, right_start:right_start + len(resampled_audio[1])] += resampled_audio[1]
+        now = time.time()
+        print "done adding this sample to the array", now - then
+        then = now
 
     max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
+
+    now = time.time()
     truncated_array = sparse_array[:, 0:max_samples].toarray()
+    print "done truncating the array", now - then
+    then = now
+
+    now = time.time()
     output = Audio(raw_samples=truncated_array)
+    print "done making a new Audio", now - then
     return output
