@@ -68,11 +68,22 @@ def synthesize(inputs):
     then = now
 
     initial_offset = 0
+    zero_index_cache = {}
     for i, (time_slice, start_time) in enumerate(inputs):
         # get the actual, zero-corrected audio and the offsets.
         # if we have a mono file, we return stereo here.
-        resampled_audio, left_offset, right_offset = time_slice.get_samples()
+
+        ## we'll pass the ZC in, if we've got 'em, and return them here too
         now = time.time()
+        key = time_slice.audio.file_path
+        if key in zero_index_cache:
+            zero_indexes = zero_index_cache[key]
+        else:
+            zero_indexes = None
+
+        resampled_audio, left_offset, right_offset, zero_indexes = time_slice.get_samples(zero_indexes)
+        zero_index_cache[key] = zero_indexes
+
         print "done getting samples for this chunk", now - then
         then = now
 
