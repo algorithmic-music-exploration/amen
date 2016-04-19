@@ -30,7 +30,7 @@ def test_get_offsets():
     faux_audio = Audio(raw_samples=faux_samples)
     time_slice = TimeSlice(t, d, faux_audio)
 
-    left, right = time_slice._get_offsets(3, 4, faux_audio.num_channels)
+    left, right, zero_indexes = time_slice._get_offsets(3, 4, faux_audio.num_channels)
     assert(left == (-1, 1)) 
 
 EXAMPLE_FILE = example_audio_file()
@@ -53,8 +53,8 @@ def test_get_samples_shape():
         duration = beat.duration.delta * 1e-9
         starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], beat.audio.sample_rate)
 
-        samples, left_offset, right_offset  = beat.get_samples()
-        left_offsets, right_offsets = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
+        samples, left_offset, right_offset, _ = beat.get_samples()
+        left_offsets, right_offsets, _ = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
 
         duration = beat.duration.delta * 1e-9
         starting_sample, ending_sample = librosa.time_to_samples([0, duration], audio.sample_rate)
@@ -73,12 +73,12 @@ def test_get_samples_shape():
 def test_get_samples_audio():
     def __test():
         beat = audio.timings['beats'][0]
-        samples, left_offset, right_offset = beat.get_samples()
+        samples, left_offset, right_offset, _ = beat.get_samples()
 
         start = beat.time.delta * 1e-9
         duration = beat.duration.delta * 1e-9
         starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], beat.audio.sample_rate)
-        left_offsets, right_offsets = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
+        left_offsets, right_offsets, _ = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
 
         start_sample = left_offsets[0] * -1
         end_sample = len(samples[0]) - left_offsets[1]
