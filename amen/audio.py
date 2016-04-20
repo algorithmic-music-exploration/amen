@@ -78,6 +78,7 @@ class Audio(object):
             self.raw_samples = np.array([y])
             self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate)
 
+        self.zero_indexes = self._create_zero_indexes()
         self.features = self._create_features()
         self.timings = self._create_timings()
         
@@ -91,6 +92,19 @@ class Audio(object):
         Write the samples out to the given filename
         """
         librosa.output.write_wav(filename, self.raw_samples, int(self.sample_rate), norm=False)
+
+    def _create_zero_indexes(self):
+        """
+        Create zero crossing indexes.
+        We use these in synthesis, and it is easier to make them here.
+        """
+        zero_indexes = []
+        for channel_index in range(self.num_channels):
+            channel = self.raw_samples[channel_index]
+            zero_crossings = librosa.zero_crossings(channel)
+            zero_index = np.nonzero(zero_crossings)[0]
+            zero_indexes.append(zero_index)
+        return zero_indexes
 
     def _create_timings(self):
         """
