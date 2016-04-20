@@ -42,7 +42,6 @@ def test_zero_indexes():
     channel = mono_audio.raw_samples[0]
     zero_crossings = librosa.zero_crossings(channel)
     zero_index = np.nonzero(zero_crossings)[0]
-    print mono_audio.zero_indexes[0], zero_index
     assert(mono_audio.zero_indexes[0].all() == zero_index.all())
 
 def test_has_feature_collection():
