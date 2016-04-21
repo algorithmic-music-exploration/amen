@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import six
 from bisect import bisect_left
 from bisect import bisect_right
@@ -37,26 +36,22 @@ class TimeSlice(object):
 
     def _get_offsets(self, starting_sample, ending_sample, num_channels):
         """
-        Find the offset to the next zero-crossing, for each channel
+        Find the offset to the next zero-crossing, for each channel.
         """
         offsets = []
-        for channel_index in range(num_channels):
-            channel = self.audio.raw_samples[channel_index]
-            zero_crossings = librosa.zero_crossings(channel)
-            zero_indexes = np.nonzero(zero_crossings)[0]
-
-            index = bisect_left(zero_indexes, starting_sample) - 1
+        for zero_index in self.audio.zero_indexes:
+            index = bisect_left(zero_index, starting_sample) - 1
             if index < 0:
                 starting_offset = 0
             else:
-                starting_crossing = zero_indexes[index]
+                starting_crossing = zero_index[index]
                 starting_offset = starting_crossing - starting_sample
     
-            index = bisect_left(zero_indexes, ending_sample)
-            if index >= len(zero_indexes):
+            index = bisect_left(zero_index, ending_sample)
+            if index >= len(zero_index):
                 ending_offset = 0
             else:
-                ending_crossing = zero_indexes[bisect_right(zero_indexes, ending_sample)]
+                ending_crossing = zero_index[bisect_right(zero_index, ending_sample)]
                 ending_offset = ending_crossing - ending_sample
 
             offsets.append((starting_offset, ending_offset))

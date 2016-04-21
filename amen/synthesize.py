@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 import types
 import librosa
 import pandas as pd
 import numpy as np
 from scipy.sparse import lil_matrix
 from amen.audio import Audio
-from amen.time import TimingList
+from amen.timing import TimingList
 from amen.exceptions import SynthesizeError
 
 def _format_inputs(inputs):
@@ -60,7 +59,6 @@ def synthesize(inputs):
 
     initial_offset = 0
     for i, (time_slice, start_time) in enumerate(inputs):
-        # get the actual, zero-corrected audio and the offsets.
         # if we have a mono file, we return stereo here.
         resampled_audio, left_offset, right_offset = time_slice.get_samples()
 

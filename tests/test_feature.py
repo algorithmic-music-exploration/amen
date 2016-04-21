@@ -11,7 +11,7 @@ from pandas.util.testing import assert_frame_equal
 from amen.audio import Audio
 from amen.feature import Feature
 from amen.feature import FeatureCollection
-from amen.time import TimeSlice
+from amen.timing import TimeSlice
 from amen.utils import example_audio_file
 from amen.exceptions import FeatureError
 

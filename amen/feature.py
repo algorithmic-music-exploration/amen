@@ -4,7 +4,7 @@ import six
 import numpy as np
 import pandas as pd
 
-from amen.time import TimeSlice
+from amen.timing import TimeSlice
 from amen.exceptions import FeatureError
 
 class Feature(object):

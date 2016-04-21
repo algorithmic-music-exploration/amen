@@ -3,7 +3,7 @@
 
 from amen.audio import Audio
 from amen.utils import example_audio_file
-from amen.time import TimingList
+from amen.timing import TimingList
 from nose.tools import eq_
 
 EXAMPLE_FILE = example_audio_file()

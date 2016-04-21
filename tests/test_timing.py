@@ -7,7 +7,7 @@ import librosa
 from amen.audio import Audio
 from amen.utils import example_audio_file
 from amen.utils import example_mono_audio_file
-from amen.time import TimeSlice
+from amen.timing import TimeSlice
 
 t = 5
 d = 10
@@ -24,12 +24,13 @@ def test_units():
     time_slice = TimeSlice(t, d, dummy_audio, unit='ms')
     assert(time_slice.time == pd.to_timedelta(t, 'ms'))
 
-def test_get_offsets():
-    faux_samples = np.array([[1,-1, 0, 1, 0, -1, 1],
-                             [1, -1, 0, 1, 0, -1, 1]])
-    faux_audio = Audio(raw_samples=faux_samples)
-    time_slice = TimeSlice(t, d, faux_audio)
 
+faux_samples = np.array([[1,-1, 0, 1, 0, -1, 1],
+                         [1, -1, 0, 1, 0, -1, 1]])
+faux_audio = Audio(raw_samples=faux_samples)
+time_slice = TimeSlice(t, d, faux_audio)
+
+def test_get_offsets():
     left, right = time_slice._get_offsets(3, 4, faux_audio.num_channels)
     assert(left == (-1, 1)) 
 
@@ -53,7 +54,7 @@ def test_get_samples_shape():
         duration = beat.duration.delta * 1e-9
         starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], beat.audio.sample_rate)
 
-        samples, left_offset, right_offset  = beat.get_samples()
+        samples, left_offset, right_offset = beat.get_samples()
         left_offsets, right_offsets = beat._get_offsets(starting_sample, ending_sample, beat.audio.num_channels)
 
         duration = beat.duration.delta * 1e-9
