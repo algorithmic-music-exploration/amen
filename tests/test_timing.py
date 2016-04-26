@@ -25,9 +25,12 @@ def test_units():
     assert(time_slice.time == pd.to_timedelta(t, 'ms'))
 
 
-faux_samples = np.array([[1,-1, 0, 1, 0, -1, 1],
-                         [1, -1, 0, 1, 0, -1, 1]])
-faux_audio = Audio(raw_samples=faux_samples)
+EXAMPLE_FILE = example_audio_file()
+stereo_audio = Audio(EXAMPLE_FILE)
+
+faux_samples = np.array([[1.0, -1.0, 0.0, 1.0, 0.0, -1.0, 1.0],
+                         [1.0, -1.0, 0.0, 1.0, 0.0, -1.0, 1.0]])
+faux_audio = Audio(raw_samples=stereo_audio.raw_samples) ## this is correct!  I need to make the test work with stereo_audio, and then also make a raw_samples= test in test_audio
 time_slice = TimeSlice(t, d, faux_audio)
 
 def test_get_offsets():

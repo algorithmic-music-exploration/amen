@@ -202,6 +202,9 @@ class Audio(object):
         """
         feature = FeatureCollection()
         mono_samples = librosa.to_mono(self.analysis_samples)
+        print "a new file"
+        print type(self.analysis_samples), self.analysis_samples, self.analysis_samples.shape
+        print type(mono_samples), mono_samples, mono_samples.shape
         pitch_names = ['c', 'c#', 'd', 'eb', 'e', 'f', 'f#', 'g', 'ab', 'a', 'bb', 'b']
         chroma_cq = librosa.feature.chroma_cqt(mono_samples)
         for chroma, pitch in zip(chroma_cq, pitch_names):
