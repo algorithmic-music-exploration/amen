@@ -39,8 +39,8 @@ def test_channels():
     assert(mono_audio.num_channels == 1)
 
 def test_audio_from_raw_samples():
-    new_audio = Audio(raw_samples=mono_audio.raw_samples)
-    assert np.allclose(new_audio.raw_samples, mono_audio.raw_samples, rtol=1e-3, atol=1e-4)
+    new_audio = Audio(raw_samples=audio.raw_samples)
+    assert np.allclose(new_audio.raw_samples, audio.raw_samples, rtol=1e-3, atol=1e-4)
 
 def test_zero_indexes():
     channel = mono_audio.raw_samples[0]
