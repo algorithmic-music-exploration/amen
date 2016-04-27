@@ -27,20 +27,13 @@ def test_units():
 
 EXAMPLE_FILE = example_audio_file()
 stereo_audio = Audio(EXAMPLE_FILE)
-
-faux_samples = np.array([[1.0, -1.0, 0.0, 1.0, 0.0, -1.0, 1.0],
-                         [1.0, -1.0, 0.0, 1.0, 0.0, -1.0, 1.0]])
-faux_audio = Audio(raw_samples=stereo_audio.raw_samples) ## this is correct!  I need to make the test work with stereo_audio, and then also make a raw_samples= test in test_audio
-time_slice = TimeSlice(t, d, faux_audio)
-
-def test_get_offsets():
-    left, right = time_slice._get_offsets(3, 4, faux_audio.num_channels)
-    assert(left == (-1, 1)) 
-
-EXAMPLE_FILE = example_audio_file()
-stereo_audio = Audio(EXAMPLE_FILE)
+time_slice = TimeSlice(t, d, stereo_audio)
 EXAMPLE_MONO_FILE = example_mono_audio_file()
 mono_audio = Audio(EXAMPLE_FILE)
+
+def test_get_offsets():
+    left, right = time_slice._get_offsets(3, 4, stereo_audio.num_channels)
+    assert(left == (-1, 3))
 
 def test_offset_samples():
     def __test():
