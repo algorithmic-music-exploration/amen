@@ -56,12 +56,13 @@ class Audio(object):
         ------
         An Audio object
         """
+
         if file_path:
             y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
         elif raw_samples is not None:
             # This assumes that we're passing in raw_samples
             # directly from another Audio's raw_samples.
-            y = raw_samples[0]
+            y = raw_samples
             sr = sample_rate
 
         self.file_path = file_path
@@ -72,12 +73,12 @@ class Audio(object):
 
         if y.ndim == 2:
             self.raw_samples = y
-            left = librosa.resample(y[0], sr, self.analysis_sample_rate)
-            right = librosa.resample(y[1], sr, self.analysis_sample_rate)
+            left = librosa.resample(y[0], sr, self.analysis_sample_rate, res_type='kaiser_fast')
+            right = librosa.resample(y[1], sr, self.analysis_sample_rate, res_type='kaiser_fast')
             self.analysis_samples = np.array([left, right])
         elif y.ndim == 1:
             self.raw_samples = np.array([y])
-            self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate)
+            self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate, res_type='kaiser_fast')
 
         self.zero_indexes = self._create_zero_indexes()
         self.features = self._create_features()
