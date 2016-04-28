@@ -59,13 +59,14 @@ class Audio(object):
         if file_path:
             y, sr = librosa.load(file_path, mono=convert_to_mono, sr=sample_rate)
         elif raw_samples is not None:
-            y = raw_samples
+            # This assumes that we're passing in raw_samples
+            # directly from another Audio's raw_samples.
+            y = raw_samples[0]
             sr = sample_rate
 
         self.file_path = file_path
         self.sample_rate = float(sr)
         self.analysis_sample_rate = float(analysis_sample_rate)
-
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
 
