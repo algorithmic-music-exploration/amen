@@ -4,6 +4,7 @@ addons:
   apt:
     packages:
     - ffmpeg
+    - libsndfile1
 
 cache:
   directories:
