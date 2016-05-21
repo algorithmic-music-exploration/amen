@@ -28,6 +28,7 @@ setup(
     install_requires=[
         'librosa >= 0.4.3',
         'pandas >= 0.16.0',
+        'pysoundfile >= 0.8',
         'six',
     ],
 )
