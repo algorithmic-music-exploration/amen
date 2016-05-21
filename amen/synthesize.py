@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+'''Audio synthesis'''
+
 import types
-import librosa
 import pandas as pd
-import numpy as np
 from scipy.sparse import lil_matrix
-from amen.audio import Audio
-from amen.timing import TimingList
-from amen.exceptions import SynthesizeError
+
+import librosa
+
+from .audio import Audio
+from .exceptions import SynthesizeError
 
 def _format_inputs(inputs):
     """
-    Organizes inputs to be a list of (TimeSlice, start_time) tuples, 
+    Organizes inputs to be a list of (TimeSlice, start_time) tuples,
     if they are not already of that form.
     # We may want to update this to support "properly" zipped lists of tuples.
 
@@ -20,19 +22,22 @@ def _format_inputs(inputs):
         - A generator that returns (TimeSlice, start_time).
         - A tuple of (TimeSlices, start_times).
     """
-    formatted_list = []
     if isinstance(inputs, list):
         time_index = pd.to_timedelta(0.0, 's')
         timings = []
         for time_slice in inputs:
             timings.append(time_index)
             time_index = time_index + time_slice.duration
-        formatted_list = zip(inputs, timings)
+
+        return zip(inputs, timings)
+
     elif isinstance(inputs, tuple):
-        formatted_list = zip(inputs[0], inputs[1])
+        return zip(inputs[0], inputs[1])
+
     elif isinstance(inputs, types.GeneratorType):
-        formatted_list = inputs
-    return formatted_list
+        return inputs
+    raise SynthesizeError('Invalid synthesis timing format: {}'.format(inputs))
+
 
 def synthesize(inputs):
     """
@@ -78,9 +83,8 @@ def synthesize(inputs):
             raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
         # get the target start and end samples
-        starting_sample, ending_sample = librosa.time_to_samples([start_time,
-                                                                  start_time + duration],
-                                                                  sr=time_slice.audio.sample_rate)
+        starting_sample, _ = librosa.time_to_samples([start_time, start_time + duration],
+                                                     sr=time_slice.audio.sample_rate)
 
         # figure out the actual starting and ending samples for each channel
         left_start = starting_sample + left_offset + initial_offset
@@ -92,5 +96,5 @@ def synthesize(inputs):
 
     max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
     truncated_array = sparse_array[:, 0:max_samples].toarray()
-    output = Audio(raw_samples=truncated_array)
-    return output
+
+    return Audio(raw_samples=truncated_array)

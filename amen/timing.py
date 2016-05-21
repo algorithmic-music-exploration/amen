@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-import six
-from bisect import bisect_left
-from bisect import bisect_right
-import librosa
+'''Timing interface'''
+
+from bisect import bisect_left, bisect_right
+
 import numpy as np
 import pandas as pd
+
+import librosa
+
 
 class TimeSlice(object):
     """
@@ -26,11 +29,16 @@ class TimeSlice(object):
         """
         start = self.time.delta * 1e-9
         duration = self.duration.delta * 1e-9
-        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration], self.audio.sample_rate)
+        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration],
+                                                                 self.audio.sample_rate)
 
-        left_offsets, right_offsets = self._get_offsets(starting_sample, ending_sample, self.audio.num_channels)
+        left_offsets, right_offsets = self._get_offsets(starting_sample,
+                                                        ending_sample,
+                                                        self.audio.num_channels)
 
-        samples = self._offset_samples(starting_sample, ending_sample, left_offsets, right_offsets, self.audio.num_channels)
+        samples = self._offset_samples(starting_sample, ending_sample,
+                                       left_offsets, right_offsets,
+                                       self.audio.num_channels)
 
         return samples, left_offsets[0], right_offsets[0]
 
@@ -46,7 +54,7 @@ class TimeSlice(object):
             else:
                 starting_crossing = zero_index[index]
                 starting_offset = starting_crossing - starting_sample
-    
+
             index = bisect_left(zero_index, ending_sample)
             if index >= len(zero_index):
                 ending_offset = 0
@@ -68,21 +76,28 @@ class TimeSlice(object):
         """
         Does the offset itself.
         """
-        left_channel = self.audio.raw_samples[0, starting_sample + left_offsets[0] : ending_sample + left_offsets[1]]
-        if num_channels == 1:
-            right_channel = left_channel
-        elif num_channels == 2:
-            right_channel = self.audio.raw_samples[1, starting_sample + right_offsets[0] : ending_sample + right_offsets[1]]
+        left_slice = (0, slice(starting_sample + left_offsets[0],
+                               ending_sample + left_offsets[1]))
+        right_slice = left_slice
 
+        if num_channels == 2:
+            right_slice = (1, slice(starting_sample + right_offsets[0],
+                                    ending_sample + right_offsets[1]))
+
+        left_channel = self.audio.raw_samples[left_slice]
+        right_channel = self.audio.raw_samples[right_slice]
         return np.array([left_channel, right_channel])
-        
+
 
 class TimingList(list):
     """
-    A list of TimeSlices.  
+    A list of TimeSlices.
     """
 
     def __init__(self, name, timings, audio, unit='s'):
+
+        super(self.__class__, self).__init__()
+
         self.name = name
         for (start, duration) in timings:
             time_slice = TimeSlice(start, duration, audio, unit=unit)

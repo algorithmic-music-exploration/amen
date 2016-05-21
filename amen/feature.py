@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+'''Container classes for feature analysis'''
 
-import six
 import numpy as np
 import pandas as pd
+import six
 
-from amen.timing import TimeSlice
-from amen.exceptions import FeatureError
+from .timing import TimeSlice
+from .exceptions import FeatureError
 
 class Feature(object):
     """
@@ -60,8 +61,8 @@ class Feature(object):
         """
         Wrapper to allow easy access to the internal data of the pandas dataframe
         """
-        for d in self.data[self.name]:
-            yield d
+        for datum in self.data[self.name]:
+            yield datum
 
     def __getitem__(self, x):
         """
@@ -82,10 +83,9 @@ class Feature(object):
         if self.time_slices is None:
             raise FeatureError("Feature has no time reference.")
 
-        for i, d in enumerate(self.data[self.name]):
-            yield (self.time_slices[i], d)
-        
-        
+        for i, datum in enumerate(self.data[self.name]):
+            yield (self.time_slices[i], datum)
+
     def at(self, time_slices):
         """
         Resample the data at a new time slice index.
@@ -111,10 +111,10 @@ class Feature(object):
         timed_data = pd.DataFrame(columns=self.data.columns)
 
         # make the new data
-        for sl in time_slices:
-            slice_index = ((sl.time <= self.data.index) &
-                           (self.data.index < sl.time + sl.duration))
-            timed_data.loc[sl.time] = self.aggregate(self.data[slice_index], axis=0)
+        for slice_t in time_slices:
+            slice_index = ((slice_t.time <= self.data.index) &
+                           (self.data.index < slice_t.time + slice_t.duration))
+            timed_data.loc[slice_t.time] = self.aggregate(self.data[slice_index], axis=0)
 
         # return the new feature object
         return Feature(data=timed_data, aggregate=self.aggregate, base=self, time_slices=time_slices)
@@ -187,7 +187,7 @@ class FeatureCollection(dict):
 
     def get(self, keys):
         """
-        Get a subset of the keys in the currect feature collection
+        Get a subset of the keys in the correct feature collection
 
         Parameters
         ----------
@@ -199,7 +199,7 @@ class FeatureCollection(dict):
         new_features : FeatureCollection
             The subset of keys
         """
-        if type(keys) != list:
+        if isinstance(keys, six.string_types):
             keys = [keys]
 
         new_features = FeatureCollection()
