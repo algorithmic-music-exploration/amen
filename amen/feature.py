@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
-import six
 import numpy as np
 import pandas as pd
 
-from amen.timing import TimeSlice
-from amen.exceptions import FeatureError
+from .timing import TimeSlice
+from .exceptions import FeatureError
 
 class Feature(object):
     """

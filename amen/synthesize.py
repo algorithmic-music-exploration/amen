@@ -3,10 +3,8 @@
 import types
 import librosa
 import pandas as pd
-import numpy as np
 from scipy.sparse import lil_matrix
 from amen.audio import Audio
-from amen.timing import TimingList
 from amen.exceptions import SynthesizeError
 
 def _format_inputs(inputs):

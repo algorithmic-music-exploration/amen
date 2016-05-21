@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-import six
-from bisect import bisect_left
-from bisect import bisect_right
-import librosa
+from bisect import bisect_left, bisect_right
+
 import numpy as np
 import pandas as pd
+
+import librosa
+
 
 class TimeSlice(object):
     """

@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+'''
+AMEN Audio analysis
+'''
 import os
-import librosa
 import pandas as pd
 import numpy as np
 import soundfile as sf
 
-from amen.feature import Feature
-from amen.feature import FeatureCollection
-from amen.timing import TimingList
+import librosa
+
+from .feature import Feature, FeatureCollection
+from .timing import TimingList
 
 class Audio(object):
     """
@@ -32,7 +34,7 @@ class Audio(object):
     """
 
     def __init__(self, file_path=None, raw_samples=None, convert_to_mono=False,
-            sample_rate=44100, analysis_sample_rate=22050):
+                 sample_rate=44100, analysis_sample_rate=22050):
         """
         Audio constructor.
         Opens a file path, loads the audio with librosa, and prepares the features
@@ -80,7 +82,7 @@ class Audio(object):
         self.zero_indexes = self._create_zero_indexes()
         self.features = self._create_features()
         self.timings = self._create_timings()
-        
+
     def __repr__(self):
         file_name = os.path.split(self.file_path)[-1]
         args = file_name, self.duration
@@ -128,20 +130,19 @@ class Audio(object):
         """
         Gets beats using librosa's beat tracker.
         """
-        tempo, beat_frames = librosa.beat.beat_track(y=self.analysis_samples,
-                                                     sr=self.analysis_sample_rate,
-                                                     trim=False)
+        _, beat_frames = librosa.beat.beat_track(y=self.analysis_samples,
+                                                 sr=self.analysis_sample_rate,
+                                                 trim=False)
 
         # pad beat times to full duration
-        beat_frames = librosa.util.fix_frames(beat_frames,
-                                              x_min=0,
-                                              x_max=librosa.time_to_frames(self.duration,
-                                                  sr=self.analysis_sample_rate))
+        f_max = librosa.time_to_frames(self.duration, sr=self.analysis_sample_rate)
+        beat_frames = librosa.util.fix_frames(beat_frames, x_min=0, x_max=f_max)
+
         # convert frames to times
         beat_times = librosa.frames_to_time(beat_frames, sr=self.analysis_sample_rate)
 
         # make the list of (start, duration) tuples that TimingList expects
-        starts_durs = [(s, t-s) for (s,t) in zip(beat_times, beat_times[1:])]
+        starts_durs = [(s, t-s) for (s, t) in zip(beat_times, beat_times[1:])]
 
         return starts_durs
 
@@ -173,7 +174,7 @@ class Audio(object):
 
         Returns
         -----
-        Feature 
+        Feature
         """
         centroids = librosa.feature.spectral_centroid(self.analysis_samples)
         data = self._convert_to_dataframe(centroids, ['spectral_centroid'])
@@ -189,7 +190,7 @@ class Audio(object):
 
         Returns
         -----
-        Feature 
+        Feature
         """
         amplitudes = librosa.feature.rmse(self.analysis_samples)
         data = self._convert_to_dataframe(amplitudes, ['amplitude'])
@@ -222,9 +223,10 @@ class Audio(object):
         feature['g#'] = feature['ab']
         feature['a#'] = feature['bb']
 
-        return feature 
+        return feature
 
-    def _convert_to_dataframe(self, feature_data, columns):
+    @classmethod
+    def _convert_to_dataframe(cls, feature_data, columns):
         """
         Take raw librosa feature data, convert to a pandas dataframe.
 
@@ -238,7 +240,7 @@ class Audio(object):
 
         Returns
         -----
-        pandas.DataFrame        
+        pandas.DataFrame
         """
         feature_data = feature_data.transpose()
         frame_numbers = np.arange(len(feature_data))
