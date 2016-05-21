@@ -23,4 +23,4 @@ for beat, amp in amplitudes.with_time():
         new_beats.append(beat)
 
 out = synthesize(new_beats)
-out.to_wav('iterate-feature.wav')
+out.output('iterate-feature.wav')

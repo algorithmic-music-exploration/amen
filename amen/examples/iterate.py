@@ -20,4 +20,4 @@ for i, beat in enumerate(beats):
         new_beats.append(beat)
 
 out = synthesize(new_beats)
-out.to_wav('iterate.wav')
+out.output('iterate.wav')

@@ -5,6 +5,7 @@ import os
 import librosa
 import pandas as pd
 import numpy as np
+import soundfile as sf
 
 from amen.feature import Feature
 from amen.feature import FeatureCollection
@@ -85,11 +86,22 @@ class Audio(object):
         args = file_name, self.duration
         return '<Audio, file: {0:s}, duration: {1:.2f}>'.format(*args)
 
-    def to_wav(self, filename):
+    def output(self, filename, format=None):
         """
-        Write the samples out to the given filename
+        Write the samples out to the given filename.
+
+        Parameters
+        ----------
+        filename : str
+            The path to write the audio on disk.
+            This can be any format supported by `pysoundfile`, including
+            `WAV`, `FLAC`, or `OGG` (but not `mp3`).
+
+        format : str
+            If provided, explicitly set the output encoding format.
+            See `soundfile.available_formats`.
         """
-        librosa.output.write_wav(filename, self.raw_samples, int(self.sample_rate), norm=False)
+        sf.write(filename, self.raw_samples.T, int(self.sample_rate), format=format)
 
     def _create_zero_indexes(self):
         """

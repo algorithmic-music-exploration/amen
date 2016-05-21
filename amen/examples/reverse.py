@@ -17,5 +17,5 @@ beats = audio.timings['beats']
 beats.reverse()
 
 out = synthesize(beats)
-out.to_wav('reversed.wav')
+out.output('reversed.wav')
 

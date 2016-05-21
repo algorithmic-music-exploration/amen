@@ -23,8 +23,6 @@ if [ ! -d "$src" ]; then
     
         # Download miniconda packages
         wget http://repo.continuum.io/miniconda/Miniconda-3.16.0-Linux-x86_64.sh -O miniconda.sh;
-        # Install libsamplerate
-        apt-get source libsamplerate
 
         # Install both environments
         bash miniconda.sh -b -p $src
@@ -32,14 +30,8 @@ if [ ! -d "$src" ]; then
         export PATH="$src/bin:$PATH"
         conda_create
 
-        pushd libsamplerate-*
-            ./configure --prefix=$src/envs/$ENV_NAME
-            make && make install
-        popd
-
         source activate $ENV_NAME
 
-        pip install git+https://github.com/bmcfee/samplerate.git
         pip install python-coveralls
 
         source deactivate

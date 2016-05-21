@@ -67,9 +67,9 @@ def test_has_chroma_feature_aliases():
     res = librosa.feature.chroma_cqt(mono_audio.analysis_samples)[1]
     assert(mono_audio.features["chroma"]["db"].data.iloc[0].item() == res[0])
 
-def test_to_wav():
+def test_output():
     n, tempfilename = tempfile.mkstemp()
-    audio.to_wav(tempfilename)
+    audio.output(tempfilename, format='WAV')
     new_samples, new_sample_rate = librosa.load(tempfilename, sr=audio.sample_rate)
     os.unlink(tempfilename)
 
