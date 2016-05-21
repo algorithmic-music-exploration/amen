@@ -1,3 +1,9 @@
+
+[![Build Status](https://travis-ci.org/algorithmic-music-exploration/amen.svg?branch=master)](https://travis-ci.org/algorithmic-music-exploration/amen)
+[![Coverage Status](https://coveralls.io/repos/github/algorithmic-music-exploration/amen/badge.svg?branch=master)](https://coveralls.io/github/algorithmic-music-exploration/amen?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/amen/badge/?version=latest)](http://amen.readthedocs.io/en/latest/?badge=latest)
+[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/algorithmic-music-exploration/amen/master/LICENSE)
+
 # amen
 A toolbox for algorithmic remixing, after Echo Nest Remix.
 
