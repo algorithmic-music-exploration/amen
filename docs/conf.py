@@ -60,7 +60,7 @@ copyright = '2016, AMEN dev team'
 author = 'AMEN dev team'
 
 import mock
-MOCK_MODULES = ['numpy', 'scipy', 'scipy.signal', 'pandas', 'librosa', 'soundfile']
+MOCK_MODULES = ['numpy', 'scipy', 'scipy.sparse', 'pandas', 'librosa', 'soundfile']
 sys.modules.update((mod_name, mock.Mock()) for mod_name in MOCK_MODULES)
 
 
