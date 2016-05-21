@@ -71,14 +71,10 @@ class Audio(object):
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
 
-        if y.ndim == 2:
-            self.raw_samples = y
-            left = librosa.resample(y[0], sr, self.analysis_sample_rate, res_type='kaiser_fast')
-            right = librosa.resample(y[1], sr, self.analysis_sample_rate, res_type='kaiser_fast')
-            self.analysis_samples = np.array([left, right])
-        elif y.ndim == 1:
-            self.raw_samples = np.array([y])
-            self.analysis_samples = librosa.resample(y, sr, self.analysis_sample_rate, res_type='kaiser_fast')
+        self.analysis_samples = librosa.resample(librosa.to_mono(y),
+                                                 sr, self.analysis_sample_rate,
+                                                 res_type='kaiser_best')
+        self.raw_samples = np.atleast_2d(y)
 
         self.zero_indexes = self._create_zero_indexes()
         self.features = self._create_features()
@@ -120,9 +116,9 @@ class Audio(object):
         """
         Gets beats using librosa's beat tracker.
         """
-        y_mono = librosa.to_mono(self.analysis_samples)
-        tempo, beat_frames = librosa.beat.beat_track(
-            y=y_mono, sr=self.analysis_sample_rate, trim=False)
+        tempo, beat_frames = librosa.beat.beat_track(y=self.analysis_samples,
+                                                     sr=self.analysis_sample_rate,
+                                                     trim=False)
 
         # pad beat times to full duration
         beat_frames = librosa.util.fix_frames(beat_frames,
@@ -167,8 +163,7 @@ class Audio(object):
         -----
         Feature 
         """
-        mono_samples = librosa.to_mono(self.analysis_samples)
-        centroids = librosa.feature.spectral_centroid(mono_samples)
+        centroids = librosa.feature.spectral_centroid(self.analysis_samples)
         data = self._convert_to_dataframe(centroids, ['spectral_centroid'])
         feature = Feature(data)
         return feature
@@ -184,8 +179,7 @@ class Audio(object):
         -----
         Feature 
         """
-        mono_samples = librosa.to_mono(self.analysis_samples)
-        amplitudes = librosa.feature.rmse(mono_samples)
+        amplitudes = librosa.feature.rmse(self.analysis_samples)
         data = self._convert_to_dataframe(amplitudes, ['amplitude'])
         feature = Feature(data)
         return feature
@@ -203,9 +197,8 @@ class Audio(object):
         FeatureCollection
         """
         feature = FeatureCollection()
-        mono_samples = librosa.to_mono(self.analysis_samples)
         pitch_names = ['c', 'c#', 'd', 'eb', 'e', 'f', 'f#', 'g', 'ab', 'a', 'bb', 'b']
-        chroma_cq = librosa.feature.chroma_cqt(mono_samples)
+        chroma_cq = librosa.feature.chroma_cqt(self.analysis_samples)
         for chroma, pitch in zip(chroma_cq, pitch_names):
             data = self._convert_to_dataframe(chroma, [pitch])
             feature[pitch] = Feature(data)
