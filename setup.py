@@ -26,7 +26,7 @@ setup(
     keywords='audio music sound',
     license='ISC',
     install_requires=[
-        'librosa >= 0.4.0',
+        'librosa >= 0.4.3',
         'pandas >= 0.16.0',
         'six',
     ],
