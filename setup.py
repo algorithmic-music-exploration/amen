@@ -12,7 +12,7 @@ setup(
     download_url='http://github.com/algorithmic-music-exploration/amen/releases',
     packages=find_packages(),
     package_data={'amen': ['example_audio/*.wav']},
-    scripts=['examples/*.py'],
+    data_files=[('examples', ['examples/*.py'])],
     classifiers=[
         "License :: OSI Approved :: ISC License (ISCL)",
         "Programming Language :: Python",
