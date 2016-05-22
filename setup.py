@@ -7,11 +7,12 @@ version = imp.load_source('amen.version', 'amen/version.py')
 setup(
     name='amen',
     version=version.version,
-    description='Algorithmic Music remixing',
+    description='Algorithmic music remixing',
     url='http://github.com/algorithmic-music-exploration/amen',
     download_url='http://github.com/algorithmic-music-exploration/amen/releases',
     packages=find_packages(),
-    package_data={'amen': ['examples/audio/*']},
+    package_data={'amen': ['example_audio/*.wav']},
+    scripts=['examples/*.py'],
     classifiers=[
         "License :: OSI Approved :: ISC License (ISCL)",
         "Programming Language :: Python",
