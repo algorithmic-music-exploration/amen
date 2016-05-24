@@ -16,7 +16,7 @@ Installation
 ------------
 Amen is pretty simple, but it stands on top of some complex stuff.
 
-If you are on Linux, you'll need ``libsoundfile``:  ``sudo apt-get install libsoundfile1``.  If you're on OS X, read on.
+If you are on Linux, you'll need ``libsoundfile``:  ``sudo apt-get install libsndfile1``.  If you're on OS X, read on.
 
 Next, you should install Anaconda, (https://www.continuum.io/downloads) which will get you all of the dependencies.
 
