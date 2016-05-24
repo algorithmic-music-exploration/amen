@@ -40,7 +40,7 @@ After installation is finished, open up a Python interpreter and run the followi
   beats.reverse()
   
   out = synthesize(beats)
-  out.to_wav('reversed.wav')
+  out.output('reversed.wav')
 
 If all that works, just play the resulting ``reversed.wav`` file, and you're on your way!
 
