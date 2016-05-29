@@ -19,7 +19,7 @@ setup(
     download_url='http://github.com/algorithmic-music-exploration/amen/releases',
     packages=find_packages(),
     package_data={'amen': ['example_audio/*.wav']},
-    data_files=[('examples', [example_paths])],
+    data_files=[('examples', example_paths)],
     classifiers=[
         "License :: OSI Approved :: ISC License (ISCL)",
         "Programming Language :: Python",
@@ -38,6 +38,6 @@ setup(
         'librosa >= 0.4.3',
         'pandas >= 0.16.0',
         'pysoundfile >= 0.8',
-        'six',
+        'six >= 1.10.0',
     ],
 )
