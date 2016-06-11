@@ -59,7 +59,8 @@ class TimeSlice(object):
             if index >= len(zero_index):
                 ending_offset = 0
             else:
-                ending_crossing = zero_index[bisect_right(zero_index, ending_sample)]
+                zci = min(bisect_right(zero_index, ending_sample), len(zero_index) - 1)
+                ending_crossing = zero_index[zci]
                 ending_offset = ending_crossing - ending_sample
 
             offsets.append((starting_offset, ending_offset))
