@@ -97,4 +97,4 @@ def synthesize(inputs):
     max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
     truncated_array = sparse_array[:, 0:max_samples].toarray()
 
-    return Audio(raw_samples=truncated_array)
+    return Audio(raw_samples=truncated_array, sample_rate=sample_rate)
