@@ -39,6 +39,7 @@ def test_json():
     for segment in deserialized['segments']:
         assert isinstance(segment['pitches'], list), type(segment['pitches'])
         assert isinstance(segment['timbre'], list), type(segment['timbre'])
+        assert len(segment['timbre']) == 12
         assert isinstance(segment['loudness_max'], float), type(segment['loudness_max'])
         assert isinstance(segment['loudness_max_time'], float), type(segment['loudness_max_time'])
         assert isinstance(segment['loudness_start'], float), type(segment['loudness_start'])
