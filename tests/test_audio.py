@@ -67,6 +67,18 @@ def test_has_chroma_feature_aliases():
     res = librosa.feature.chroma_cqt(mono_audio.analysis_samples)[1]
     assert(mono_audio.features["chroma"]["db"].data.iloc[0].item() == res[0])
 
+def test_harmonic():
+    harmonic_audio = mono_audio.harmonic()
+    test_harmonic = librosa.effects.harmonic(librosa.to_mono(mono_audio.raw_samples), margin=3.0)
+    test_harmonic_audio = Audio(raw_samples=test_harmonic, sample_rate=mono_audio.sample_rate)
+    assert np.allclose(harmonic_audio.raw_samples, test_harmonic_audio.raw_samples, rtol=1e-3, atol=1e-4)
+
+def test_percussive():
+    percussive_audio = mono_audio.percussive()
+    test_percussive = librosa.effects.percussive(librosa.to_mono(mono_audio.raw_samples), margin=3.0)
+    test_percussive_audio = Audio(raw_samples=test_percussive, sample_rate=mono_audio.sample_rate)
+    assert np.allclose(percussive_audio.raw_samples, test_percussive_audio.raw_samples, rtol=1e-3, atol=1e-4)
+
 def test_output():
     n, tempfilename = tempfile.mkstemp()
     audio.output(tempfilename, format='WAV')

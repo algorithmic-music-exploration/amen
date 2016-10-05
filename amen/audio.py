@@ -105,6 +105,38 @@ class Audio(object):
         """
         sf.write(filename, self.raw_samples.T, int(self.sample_rate), format=format)
 
+    def harmonic(self, margin=3.0):
+        """
+        Wraps librosa's `harmonic` function, and returns a new Audio object.
+        Note that this folds to mono.
+
+        Parameters
+        ---------
+        margin : float
+            The larger the margin, the larger the separation.
+            The default is `3.0`.
+        """
+        harmonic = librosa.effects.harmonic(librosa.to_mono(self.raw_samples), margin=margin)
+        harmonic_audio = Audio(raw_samples=harmonic, sample_rate=self.sample_rate)
+
+        return harmonic_audio
+
+    def percussive(self, margin=3.0):
+        """
+        Wraps librosa's `percussive` function, and returns a new Audio object.
+        Note that this folds to mono.
+
+        Parameters
+        ---------
+        margin : float
+            The larger the margin, the larger the separation.
+            The default is `3.0`.
+        """
+        percussive = librosa.effects.percussive(librosa.to_mono(self.raw_samples), margin=margin)
+        percussive_audio = Audio(raw_samples=percussive, sample_rate=self.sample_rate)
+
+        return percussive_audio
+
     def _create_zero_indexes(self):
         """
         Create zero crossing indexes.
