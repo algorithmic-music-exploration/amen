@@ -129,10 +129,10 @@ class AudioQuantum(object):
                                'a', 'bb', 'b']
                 value = [value[pitch] for pitch in pitch_names]
             elif feature == 'timbre':
-                # timbre is a list of 12 PCA things in remix
-                # we take the first 12 mfccs
+                # timbre is a list of 12 PCA things in Remix
+                # we take the first 12 mfcss
                 timbre_dimensions = range(12)
-                value = [value[t] for t in timbre_dimensions]
+                value = [value["mfcc_%s" % t] for t in timbre_dimensions]
 
             setattr(self, key, value)
         # TODO: stub fake loudness_max values from RMS energy

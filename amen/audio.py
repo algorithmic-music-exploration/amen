@@ -203,6 +203,8 @@ class Audio(object):
     def _get_timbre(self):
         """
         Gets timbre (MFCC) data, taking the first 20.
+        Note that the keys to the Feature are "mffc_<index>", 
+        to avoid having a dict-like object with numeric keys.
 
         Parameters
         ---------
@@ -211,12 +213,12 @@ class Audio(object):
         -----
         Feature
         """
-        centroids = librosa.feature.spectral_centroid(self.analysis_samples)
         mfccs = librosa.feature.mfcc(y=self.analysis_samples, sr=self.analysis_sample_rate, n_mfcc=12)
         feature = FeatureCollection()
         for index, mfcc in enumerate(mfccs):
             data = self._convert_to_dataframe(mfcc, ['timbre'])
-            feature[index] = Feature(data)
+            key = 'mfcc_%s' % (index)
+            feature[key] = Feature(data)
 
         return feature
 

@@ -61,7 +61,7 @@ def test_has_centroid_feature():
 
 def test_has_timbre_feature():
     res = librosa.feature.mfcc(y=mono_audio.analysis_samples, sr=mono_audio.analysis_sample_rate, n_mfcc=20)[0]
-    assert(mono_audio.features["timbre"][0].data.iloc[0].item() == res[0])
+    assert(mono_audio.features["timbre"]["mfcc_0"].data.iloc[0].item() == res[0])
 
 def test_has_chroma_feature():
     res = librosa.feature.chroma_cqt(mono_audio.analysis_samples)[0]
