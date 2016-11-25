@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 '''
-AMEN Audio analysis
+Audio analysis
 '''
+
 import os
 import pandas as pd
 import numpy as np
@@ -162,6 +164,7 @@ class Audio(object):
         features = FeatureCollection()
         features['centroid'] = self._get_centroid()
         features['amplitude'] = self._get_amplitude()
+        features['timbre'] = self._get_timbre()
         features['chroma'] = self._get_chroma()
         return features
 
@@ -195,6 +198,28 @@ class Audio(object):
         amplitudes = librosa.feature.rmse(self.analysis_samples)
         data = self._convert_to_dataframe(amplitudes, ['amplitude'])
         feature = Feature(data)
+        return feature
+
+    def _get_timbre(self):
+        """
+        Gets timbre (MFCC) data, taking the first 20.
+        Note that the keys to the Feature are "mffc_<index>", 
+        to avoid having a dict-like object with numeric keys.
+
+        Parameters
+        ---------
+
+        Returns
+        -----
+        Feature
+        """
+        mfccs = librosa.feature.mfcc(y=self.analysis_samples, sr=self.analysis_sample_rate, n_mfcc=12)
+        feature = FeatureCollection()
+        for index, mfcc in enumerate(mfccs):
+            data = self._convert_to_dataframe(mfcc, ['timbre'])
+            key = 'mfcc_%s' % (index)
+            feature[key] = Feature(data)
+
         return feature
 
     def _get_chroma(self):
