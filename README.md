@@ -46,7 +46,7 @@ We've got a few other examples in the `examples` folder - most involve editing a
 
 # Documentation
 
-You can read the docs at http://amen.readthedocs.io/en/latest!  You can also build the docs locally, using[Sphinx](http://www.sphinx-doc.org). Just run `make` within the `docs` directory.
+You can read the docs at http://amen.readthedocs.io/en/latest!  You can also build the docs locally, using [Sphinx](http://www.sphinx-doc.org). Just run `make` within the `docs` directory.
 
 # Contributing
 Welcome aboard!  Please see CONTRIBUTING.md, or open an issue if things don't work right.
