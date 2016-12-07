@@ -46,9 +46,7 @@ We've got a few other examples in the `examples` folder - most involve editing a
 
 # Documentation
 
-Follow [link](http://amen.readthedocs.io/en/latest/?badge=latest) at top of this file or build local documentation of the codebase in a number of formats by running `make` within the `docs` directory.
-	* Requires [Sphinx](http://www.sphinx-doc.org) which you can install with pip: `pip install -U Sphinx`
-		* This may also require installing any missing modules (`mock`, `numpydoc`) with `pip`
+You can read the docs at http://amen.readthedocs.io/en/latest!  You can also build the docs locally, using[Sphinx](http://www.sphinx-doc.org). Just run `make` within the `docs` directory.
 
 # Contributing
 Welcome aboard!  Please see CONTRIBUTING.md, or open an issue if things don't work right.
