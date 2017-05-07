@@ -255,6 +255,8 @@ class Audio(object):
     def _get_tempo(self):
         """
         Gets tempo data from librosa, and returns it as a feature collection.
+        Note that the tempo feature uses median aggregation, as opposed to the
+        default mean.
 
         Parameters
         ---------
@@ -266,7 +268,7 @@ class Audio(object):
         onset_env = librosa.onset.onset_strength(self.analysis_samples, sr=self.analysis_sample_rate)
         tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=self.analysis_sample_rate, aggregate=None)
         data = self._convert_to_dataframe(tempo, ['tempo'])
-        feature = Feature(data)
+        feature = Feature(data, aggregate=np.median)
 
         return feature
 
