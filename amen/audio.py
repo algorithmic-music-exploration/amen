@@ -263,8 +263,6 @@ class Audio(object):
         -----
         FeatureCollection
         """
-        centroids = librosa.feature.spectral_centroid(self.analysis_samples)
-
         onset_env = librosa.onset.onset_strength(self.analysis_samples, sr=self.analysis_sample_rate)
         tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=self.analysis_sample_rate, aggregate=None)
         data = self._convert_to_dataframe(tempo, ['tempo'])
