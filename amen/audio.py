@@ -125,6 +125,7 @@ class Audio(object):
         Create timings in a timings dict.
         """
         timings = {}
+        timings['track'] = TimingList('track', [(0, self.duration)], self)
         timings['beats'] = TimingList('beats', self._get_beats(), self)
         return timings
 
