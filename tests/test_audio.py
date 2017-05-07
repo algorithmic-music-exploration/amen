@@ -70,6 +70,11 @@ def test_has_chroma_feature_aliases():
     res = librosa.feature.chroma_cqt(mono_audio.analysis_samples)[1]
     assert(mono_audio.features["chroma"]["db"].data.iloc[0].item() == res[0])
 
+def test_has_tempo_feature():
+    onset_env = librosa.onset.onset_strength(mono_audio.analysis_samples, sr=mono_audio.analysis_sample_rate)
+    res  = librosa.beat.tempo(onset_envelope=onset_env, sr=mono_audio.analysis_sample_rate, aggregate=None)
+    assert(mono_audio.features["tempo"].data.iloc[0].item() == res[0])
+
 def test_output():
     n, tempfilename = tempfile.mkstemp()
     audio.output(tempfilename, format='WAV')

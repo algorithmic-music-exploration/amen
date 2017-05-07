@@ -166,6 +166,7 @@ class Audio(object):
         features['amplitude'] = self._get_amplitude()
         features['timbre'] = self._get_timbre()
         features['chroma'] = self._get_chroma()
+        features['tempo'] = self._get_tempo()
         return features
 
     def _get_centroid(self):
@@ -247,6 +248,26 @@ class Audio(object):
         feature['gb'] = feature['f#']
         feature['g#'] = feature['ab']
         feature['a#'] = feature['bb']
+
+        return feature
+
+    def _get_tempo(self):
+        """
+        Gets tempo data from librosa, and returns it as a feature collection.
+
+        Parameters
+        ---------
+
+        Returns
+        -----
+        FeatureCollection
+        """
+        centroids = librosa.feature.spectral_centroid(self.analysis_samples)
+
+        onset_env = librosa.onset.onset_strength(self.analysis_samples, sr=self.analysis_sample_rate)
+        tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=self.analysis_sample_rate, aggregate=None)
+        data = self._convert_to_dataframe(tempo, ['tempo'])
+        feature = Feature(data)
 
         return feature
 
