@@ -125,6 +125,7 @@ class Audio(object):
         Create timings in a timings dict.
         """
         timings = {}
+        timings['track'] = TimingList('track', [(0, self.duration)], self)
         timings['beats'] = TimingList('beats', self._get_beats(), self)
         return timings
 
@@ -166,6 +167,7 @@ class Audio(object):
         features['amplitude'] = self._get_amplitude()
         features['timbre'] = self._get_timbre()
         features['chroma'] = self._get_chroma()
+        features['tempo'] = self._get_tempo()
         return features
 
     def _get_centroid(self):
@@ -247,6 +249,26 @@ class Audio(object):
         feature['gb'] = feature['f#']
         feature['g#'] = feature['ab']
         feature['a#'] = feature['bb']
+
+        return feature
+
+    def _get_tempo(self):
+        """
+        Gets tempo data from librosa, and returns it as a feature collection.
+        Note that the tempo feature uses median aggregation, as opposed to the
+        default mean.
+
+        Parameters
+        ---------
+
+        Returns
+        -----
+        FeatureCollection
+        """
+        onset_env = librosa.onset.onset_strength(self.analysis_samples, sr=self.analysis_sample_rate)
+        tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=self.analysis_sample_rate, aggregate=None)
+        data = self._convert_to_dataframe(tempo, ['tempo'])
+        feature = Feature(data, aggregate=np.median)
 
         return feature
 
