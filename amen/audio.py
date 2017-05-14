@@ -127,6 +127,7 @@ class Audio(object):
         timings = {}
         timings['track'] = TimingList('track', [(0, self.duration)], self)
         timings['beats'] = TimingList('beats', self._get_beats(), self)
+        timings['segments'] = TimingList('segments', self._get_segments(), self)
         return timings
 
     def _get_beats(self):
@@ -146,6 +147,22 @@ class Audio(object):
 
         # make the list of (start, duration) tuples that TimingList expects
         starts_durs = [(s, t-s) for (s, t) in zip(beat_times, beat_times[1:])]
+
+        return starts_durs
+
+    def _get_segments(self):
+        """
+        Gets Echo Nest style segments using librosa's onset detection and backtracking.
+        """
+
+        onset_frames  = librosa.onset.onset_detect(y=self.analysis_samples,
+                                                sr=self.analysis_sample_rate,
+                                                backtrack=True)
+        segment_times = librosa.frames_to_time(onset_frames,
+                                               sr=self.analysis_sample_rate)
+
+        # make the list of (start, duration) tuples that TimingList expects
+        starts_durs = [(s, t-s) for (s, t) in zip(segment_times, segment_times[1:])]
 
         return starts_durs
 

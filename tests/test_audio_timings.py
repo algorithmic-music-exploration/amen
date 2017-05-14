@@ -18,3 +18,8 @@ def test_beats():
     beats = AUDIO.timings['beats']
     assert isinstance(beats, TimingList), type(beats)
     eq_(len(beats), 11)
+
+def test_segments():
+    segments = AUDIO.timings['segments']
+    assert isinstance(segments, TimingList), type(segments)
+    eq_(len(segments), 42)
