@@ -2,7 +2,7 @@
 # encoding: utf=8
 
 """
-echo_nest_json.py : Write Echo Nest JSON to a file
+echo_nest_json.py : Write Echo Nest shaped JSON to a file
 """
 
 import json
