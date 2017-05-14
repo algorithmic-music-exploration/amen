@@ -31,12 +31,21 @@ class AudioAnalysis(object):
         self.segments = AudioQuantumList(kind='segments')
 
         for key in self.audio.timings:
-            setattr(self, key, self._get_quantums(key))
+            # Track-level attributes are dealt with below
+            if key == 'track':
+                continue
+            else:
+                setattr(self, key, self._get_quantums(key))
+
         # TODO: stub segments to be same as beats for now
         self.segments = self._get_quantums('beats')
         self.segments.kind = 'segments'
         for quantum in self.segments:
             quantum.kind = 'segment'
+
+        # Set track-level attributes
+        track_level = self.audio.timings['track']
+        self.tempo = self.audio.features['tempo'].at(track_level)
 
     def _get_quantums(self, kind):
         """
@@ -103,7 +112,9 @@ class AudioAnalysis(object):
                         continue
                     result[key] = as_dict(value)
                 return result
+            # default
             return obj
+
         return as_dict(self)
 
     def to_json(self):
@@ -130,7 +141,7 @@ class AudioQuantum(object):
                 value = [value[pitch] for pitch in pitch_names]
             elif feature == 'timbre':
                 # timbre is a list of 12 PCA things in Remix
-                # we take the first 12 mfcss
+                # we take the first 12 MFCCs
                 timbre_dimensions = range(12)
                 value = [value["mfcc_%s" % t] for t in timbre_dimensions]
 
