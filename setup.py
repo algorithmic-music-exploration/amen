@@ -35,7 +35,7 @@ setup(
     keywords='audio music sound',
     license='ISC',
     install_requires=[
-        'librosa >= 0.4.3',
+        'librosa >= 0.5.0',
         'pandas >= 0.16.0',
         'pysoundfile >= 0.8',
         'six >= 1.10.0',
