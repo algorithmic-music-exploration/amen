@@ -4,13 +4,6 @@ import imp
 import os
 
 version = imp.load_source('amen.version', 'amen/version.py')
-
-# Tacky fix to include examples as data files
-current_path = os.path.abspath(os.path.dirname(__file__))
-example_path = os.path.join(current_path, 'examples')
-example_files = os.listdir(example_path)
-example_paths = [os.path.join('examples', f) for f in example_files]
-
 setup(
     name='amen',
     version=version.version,
@@ -19,7 +12,6 @@ setup(
     download_url='http://github.com/algorithmic-music-exploration/amen/releases',
     packages=find_packages(),
     package_data={'amen': ['example_audio/*.wav']},
-    data_files=[('examples', example_paths)],
     classifiers=[
         "License :: OSI Approved :: ISC License (ISCL)",
         "Programming Language :: Python",
