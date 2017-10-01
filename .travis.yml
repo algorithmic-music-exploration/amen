@@ -3,7 +3,7 @@ sudo: false
 addons:
   apt:
     packages:
-    - ffmpeg
+    - libav-tools
     - libsndfile1
 
 cache:
