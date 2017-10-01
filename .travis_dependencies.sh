@@ -33,7 +33,7 @@ if [ ! -d "$src" ]; then
         source activate $ENV_NAME
 
         pip install python-coveralls
-
+        conda install llvmlite # needed for python 3.4
         source deactivate
     popd
 else
