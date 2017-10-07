@@ -18,7 +18,9 @@ If you are on OSX, go on to the install Anaconda step. If you are on Linux, you'
 - `libavtools`:  `sudo apt-get update && sudo apt-get install libav-tools`
 
 You should install Anaconda, (https://www.continuum.io/downloads) which will get you all of the dependencies.
+
 Then, install via pip:  `pip install amen`.  That should be it!
+
 (If you're a serious Python person, you can just get Amen from pip, without Anaconda - but that will require installing numpy, scipy, a fortran compiler, and so on.)
 
 # Testing the Installation
