@@ -14,14 +14,12 @@ Amen is developed on Ubuntu 14.04 and higher.  OS X should be workable.  Windows
 Amen is pretty simple, but it stands on top of some complex stuff.
 
 If you are on OSX, go on to the install Anaconda step. If you are on Linux, you'll need to do some apt-getting:
-- `libsoundfile`:  `sudo apt-get install libsndfile1`.
-- `libavtools`:  `sudo apt-get update && sudo apt-get install libav-tools`.
+- `libsoundfile`:  `sudo apt-get install libsndfile1`
+- `libavtools`:  `sudo apt-get update && sudo apt-get install libav-tools`
 
 You should install Anaconda, (https://www.continuum.io/downloads) which will get you all of the dependencies.
-
 Then, install via pip:  `pip install amen`.  That should be it!
-
-(If you're a serious Python cat, you can just get Amen from pip, without Anaconda - but that will require installing numpy, scipy, a fortran compiler, and so on.)
+(If you're a serious Python person, you can just get Amen from pip, without Anaconda - but that will require installing numpy, scipy, a fortran compiler, and so on.)
 
 # Testing the Installation
 After installation is finished, open up a Python interpreter and run the following (or run it from a file):
