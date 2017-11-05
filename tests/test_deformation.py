@@ -5,12 +5,19 @@ import numpy as np
 import librosa
 from amen.audio import Audio
 from amen.utils import example_audio_file
+from amen.deformation import time_stretch
 from amen.deformation import harmonic_separation
 from amen.deformation import percussive_separation
 
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
 mono_audio = Audio(EXAMPLE_FILE, convert_to_mono=True, sample_rate=44100)
+
+def test_time_stretch():
+    time_stretch_audio = time_stretch(mono_audio, 1.5)
+    test_time_stretch = librosa.effects.time_stretch(librosa.to_mono(mono_audio.raw_samples), 1.5)
+    test_time_stretch_audio = Audio(raw_samples=test_time_stretch, sample_rate=mono_audio.sample_rate)
+    assert np.allclose(time_stretch_audio.raw_samples, test_time_stretch_audio.raw_samples, rtol=1e-3, atol=1e-4)
 
 def test_harmonic():
     harmonic_audio = harmonic_separation(mono_audio)
