@@ -15,6 +15,7 @@ import librosa
 from .feature import Feature, FeatureCollection
 from .timing import TimingList
 
+
 class Audio(object):
     """
     The base Audio object:  wraps the ouput from librosa, and provides access to features
@@ -35,8 +36,14 @@ class Audio(object):
             collection of named feature objects
     """
 
-    def __init__(self, file_path=None, raw_samples=None, convert_to_mono=False,
-                 sample_rate=44100, analysis_sample_rate=22050):
+    def __init__(
+        self,
+        file_path=None,
+        raw_samples=None,
+        convert_to_mono=False,
+        sample_rate=44100,
+        analysis_sample_rate=22050,
+    ):
         """
         Audio constructor.
         Opens a file path, loads the audio with librosa, and prepares the features
@@ -76,9 +83,9 @@ class Audio(object):
         self.num_channels = y.ndim
         self.duration = librosa.get_duration(y=y, sr=sr)
 
-        self.analysis_samples = librosa.resample(librosa.to_mono(y),
-                                                 sr, self.analysis_sample_rate,
-                                                 res_type='kaiser_best')
+        self.analysis_samples = librosa.resample(
+            librosa.to_mono(y), sr, self.analysis_sample_rate, res_type='kaiser_best'
+        )
         self.raw_samples = np.atleast_2d(y)
 
         self.zero_indexes = self._create_zero_indexes()
@@ -134,9 +141,9 @@ class Audio(object):
         """
         Gets beats using librosa's beat tracker.
         """
-        _, beat_frames = librosa.beat.beat_track(y=self.analysis_samples,
-                                                 sr=self.analysis_sample_rate,
-                                                 trim=False)
+        _, beat_frames = librosa.beat.beat_track(
+            y=self.analysis_samples, sr=self.analysis_sample_rate, trim=False
+        )
 
         # pad beat times to full duration
         f_max = librosa.time_to_frames(self.duration, sr=self.analysis_sample_rate)
@@ -146,7 +153,7 @@ class Audio(object):
         beat_times = librosa.frames_to_time(beat_frames, sr=self.analysis_sample_rate)
 
         # make the list of (start, duration) tuples that TimingList expects
-        starts_durs = [(s, t-s) for (s, t) in zip(beat_times, beat_times[1:])]
+        starts_durs = [(s, t - s) for (s, t) in zip(beat_times, beat_times[1:])]
 
         return starts_durs
 
@@ -155,14 +162,15 @@ class Audio(object):
         Gets Echo Nest style segments using librosa's onset detection and backtracking.
         """
 
-        onset_frames  = librosa.onset.onset_detect(y=self.analysis_samples,
-                                                sr=self.analysis_sample_rate,
-                                                backtrack=True)
-        segment_times = librosa.frames_to_time(onset_frames,
-                                               sr=self.analysis_sample_rate)
+        onset_frames = librosa.onset.onset_detect(
+            y=self.analysis_samples, sr=self.analysis_sample_rate, backtrack=True
+        )
+        segment_times = librosa.frames_to_time(
+            onset_frames, sr=self.analysis_sample_rate
+        )
 
         # make the list of (start, duration) tuples that TimingList expects
-        starts_durs = [(s, t-s) for (s, t) in zip(segment_times, segment_times[1:])]
+        starts_durs = [(s, t - s) for (s, t) in zip(segment_times, segment_times[1:])]
 
         return starts_durs
 
@@ -214,7 +222,7 @@ class Audio(object):
         -----
         Feature
         """
-        amplitudes = librosa.feature.rmse(self.analysis_samples)
+        amplitudes = librosa.feature.rms(self.analysis_samples)
         data = self._convert_to_dataframe(amplitudes, ['amplitude'])
         feature = Feature(data)
         return feature
@@ -232,7 +240,9 @@ class Audio(object):
         -----
         Feature
         """
-        mfccs = librosa.feature.mfcc(y=self.analysis_samples, sr=self.analysis_sample_rate, n_mfcc=12)
+        mfccs = librosa.feature.mfcc(
+            y=self.analysis_samples, sr=self.analysis_sample_rate, n_mfcc=12
+        )
         feature = FeatureCollection()
         for index, mfcc in enumerate(mfccs):
             data = self._convert_to_dataframe(mfcc, ['timbre'])
@@ -282,8 +292,12 @@ class Audio(object):
         -----
         FeatureCollection
         """
-        onset_env = librosa.onset.onset_strength(self.analysis_samples, sr=self.analysis_sample_rate)
-        tempo = librosa.beat.tempo(onset_envelope=onset_env, sr=self.analysis_sample_rate, aggregate=None)
+        onset_env = librosa.onset.onset_strength(
+            self.analysis_samples, sr=self.analysis_sample_rate
+        )
+        tempo = librosa.beat.tempo(
+            onset_envelope=onset_env, sr=self.analysis_sample_rate, aggregate=None
+        )
         data = self._convert_to_dataframe(tempo, ['tempo'])
         feature = Feature(data, aggregate=np.median)
 
