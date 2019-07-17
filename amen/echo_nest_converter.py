@@ -10,6 +10,7 @@ class AudioAnalysis(object):
     """
     An Analysis object compatible with EchoNest Remix
     """
+
     def __init__(self, audio_object):
         """
         AudioAnalysis constructor.
@@ -67,10 +68,7 @@ class AudioAnalysis(object):
                 feature = feature.at(time_slice)
                 features[key] = feature
             quantum = AudioQuantum(
-                kind[:-1],
-                time_slice.time,
-                time_slice.duration,
-                features
+                kind[:-1], time_slice.time, time_slice.duration, features
             )
             q_list.append(quantum)
         return q_list
@@ -84,6 +82,7 @@ class AudioAnalysis(object):
         flask.jsonify(analysis.as_serializable())
         instead of the built-in to_json()
         """
+
         def as_dict(obj):
             # Convert timedeltas to float
             if isinstance(obj, datetime.timedelta):
@@ -101,8 +100,7 @@ class AudioAnalysis(object):
                 for item in obj:
                     items.append(as_dict(item))
                 # Extract if list contains only 1 item
-                while (isinstance(items, collections.Sequence)
-                       and len(items) == 1):
+                while isinstance(items, collections.Sequence) and len(items) == 1:
                     items = items[0]
                 return items
             if hasattr(obj, '__dict__'):
@@ -136,8 +134,20 @@ class AudioQuantum(object):
             if feature == 'chroma':
                 # pitches are a list in Remix
                 key = 'pitches'
-                pitch_names = ['c', 'c#', 'd', 'eb', 'e', 'f', 'f#', 'g', 'ab',
-                               'a', 'bb', 'b']
+                pitch_names = [
+                    'c',
+                    'c#',
+                    'd',
+                    'eb',
+                    'e',
+                    'f',
+                    'f#',
+                    'g',
+                    'ab',
+                    'a',
+                    'bb',
+                    'b',
+                ]
                 value = [value[pitch] for pitch in pitch_names]
             elif feature == 'timbre':
                 # timbre is a list of 12 PCA things in Remix

@@ -18,4 +18,3 @@ beats.reverse()
 
 out = synthesize(beats)
 out.output('reversed.wav')
-
