@@ -17,8 +17,9 @@ notifications:
 
 python:
     - "2.7"
-    - "3.4"
     - "3.5"
+    - "3.6"
+    - "3.7"
 
 before_install:
     - bash .travis_dependencies.sh
@@ -34,6 +35,7 @@ install:
 script:
     - python --version
     - nosetests --with-coverage --cover-erase --cover-package=amen -v -w tests/
+    - 
 
 after_success:
     - coveralls
