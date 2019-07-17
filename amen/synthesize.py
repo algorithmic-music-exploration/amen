@@ -11,6 +11,7 @@ import librosa
 from .audio import Audio
 from .exceptions import SynthesizeError
 
+
 def _format_inputs(inputs):
     """
     Organizes inputs to be a list of (TimeSlice, start_time) tuples,
@@ -58,7 +59,7 @@ def synthesize(inputs):
 
     max_time = 0.0
     sample_rate = 44100
-    array_length = 20 * 60 # 20 minutes!
+    array_length = 20 * 60  # 20 minutes!
     array_shape = (2, sample_rate * array_length)
     sparse_array = lil_matrix(array_shape)
 
@@ -83,18 +84,23 @@ def synthesize(inputs):
             raise SynthesizeError("Amen can only synthesize up to 20 minutes of audio.")
 
         # get the target start and end samples
-        starting_sample, _ = librosa.time_to_samples([start_time, start_time + duration],
-                                                     sr=time_slice.audio.sample_rate)
+        starting_sample, _ = librosa.time_to_samples(
+            [start_time, start_time + duration], sr=time_slice.audio.sample_rate
+        )
 
         # figure out the actual starting and ending samples for each channel
         left_start = starting_sample + left_offset + initial_offset
         right_start = starting_sample + right_offset + initial_offset
 
         # add the data from each channel to the array
-        sparse_array[0, left_start:left_start + len(resampled_audio[0])] += resampled_audio[0]
-        sparse_array[1, right_start:right_start + len(resampled_audio[1])] += resampled_audio[1]
+        sparse_array[
+            0, left_start : left_start + len(resampled_audio[0])
+        ] += resampled_audio[0]
+        sparse_array[
+            1, right_start : right_start + len(resampled_audio[1])
+        ] += resampled_audio[1]
 
     max_samples = librosa.time_to_samples([max_time], sr=sample_rate)
-    truncated_array = sparse_array[:, 0:max_samples[0]].toarray()
+    truncated_array = sparse_array[:, 0 : max_samples[0]].toarray()
 
     return Audio(raw_samples=truncated_array, sample_rate=sample_rate)

@@ -8,6 +8,7 @@ import six
 from .timing import TimeSlice
 from .exceptions import FeatureError
 
+
 class Feature(object):
     """
     Core feature container object.  Handles indexing and time-slicing.
@@ -20,6 +21,7 @@ class Feature(object):
     at(time_slices)
         Resample the feature at the given TimeSlices
     """
+
     def __init__(self, data, aggregate=np.mean, base=None, time_slices=None):
         """
         Constructor for feature object
@@ -54,7 +56,7 @@ class Feature(object):
         self.base = base
 
     def __repr__(self):
-        args = (self.name)
+        args = self.name
         return '<Feature, {0}>'.format(args)
 
     def __iter__(self):
@@ -112,12 +114,20 @@ class Feature(object):
 
         # make the new data
         for slice_t in time_slices:
-            slice_index = ((slice_t.time <= self.data.index) &
-                           (self.data.index < slice_t.time + slice_t.duration))
-            timed_data.loc[slice_t.time] = self.aggregate(self.data[slice_index], axis=0)
+            slice_index = (slice_t.time <= self.data.index) & (
+                self.data.index < slice_t.time + slice_t.duration
+            )
+            timed_data.loc[slice_t.time] = self.aggregate(
+                self.data[slice_index], axis=0
+            )
 
         # return the new feature object
-        return Feature(data=timed_data, aggregate=self.aggregate, base=self, time_slices=time_slices)
+        return Feature(
+            data=timed_data,
+            aggregate=self.aggregate,
+            base=self,
+            time_slices=time_slices,
+        )
 
 
 class FeatureCollection(dict):
@@ -207,4 +217,3 @@ class FeatureCollection(dict):
             if key in self:
                 new_features[key] = self[key]
         return new_features
-

@@ -16,29 +16,34 @@ from amen.exceptions import SynthesizeError
 EXAMPLE_FILE = example_audio_file()
 audio = Audio(EXAMPLE_FILE)
 
+
 def test_format_inputs_length():
     formatted_inputs = _format_inputs(audio.timings['beats'])
     formatted_inputs = list(formatted_inputs)
-    assert(len(audio.timings['beats']) == len(formatted_inputs))
+    assert len(audio.timings['beats']) == len(formatted_inputs)
+
 
 def test_format_inputs_list():
     formatted_inputs = _format_inputs(audio.timings['beats'])
     formatted_inputs = list(formatted_inputs)
     beat = audio.timings['beats'][0]
-    assert(formatted_inputs[0] == (audio.timings['beats'][0], beat.time))
+    assert formatted_inputs[0] == (audio.timings['beats'][0], beat.time)
+
 
 def test_format_inputs_parallel_list():
     times = [beat.time for beat in audio.timings['beats']]
     formatted_inputs = _format_inputs((audio.timings['beats'], times))
     formatted_inputs = list(formatted_inputs)
-    assert(formatted_inputs[0] == (audio.timings['beats'][0], times[0]))
+    assert formatted_inputs[0] == (audio.timings['beats'][0], times[0])
+
 
 def test_format_inputs_generator():
     def the_generator():
         for beat in audio.timings['beats']:
             yield beat, beat.time
+
     formatted_inputs = _format_inputs(the_generator())
-    assert(six.next(formatted_inputs) == six.next(the_generator()))
+    assert six.next(formatted_inputs) == six.next(the_generator())
 
 
 def test_synthesize_fails_if_too_long():
@@ -50,17 +55,22 @@ stereo_audio = audio
 EXAMPLE_MONO_FILE = example_mono_audio_file()
 mono_audio = Audio(EXAMPLE_MONO_FILE)
 
+
 def test_synthesize_returns():
     def __test():
         synthesized_audio = synthesize(audio.timings['beats'])
         assert isinstance(synthesized_audio, Audio)
+
     for audio in [mono_audio, stereo_audio]:
         yield __test
+
 
 def test_synthesize_sample_output():
     def __test():
         synthesized_audio = synthesize(audio.timings['beats'])
-        assert(np.isclose(audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]))
+        assert np.isclose(
+            audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]
+        )
+
     for audio in [mono_audio, stereo_audio]:
         yield __test
-

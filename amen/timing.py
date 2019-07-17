@@ -29,16 +29,21 @@ class TimeSlice(object):
         """
         start = self.time.delta * 1e-9
         duration = self.duration.delta * 1e-9
-        starting_sample, ending_sample = librosa.time_to_samples([start, start + duration],
-                                                                 self.audio.sample_rate)
+        starting_sample, ending_sample = librosa.time_to_samples(
+            [start, start + duration], self.audio.sample_rate
+        )
 
-        left_offsets, right_offsets = self._get_offsets(starting_sample,
-                                                        ending_sample,
-                                                        self.audio.num_channels)
+        left_offsets, right_offsets = self._get_offsets(
+            starting_sample, ending_sample, self.audio.num_channels
+        )
 
-        samples = self._offset_samples(starting_sample, ending_sample,
-                                       left_offsets, right_offsets,
-                                       self.audio.num_channels)
+        samples = self._offset_samples(
+            starting_sample,
+            ending_sample,
+            left_offsets,
+            right_offsets,
+            self.audio.num_channels,
+        )
 
         return samples, left_offsets[0], right_offsets[0]
 
@@ -72,18 +77,25 @@ class TimeSlice(object):
 
         return results
 
-
-    def _offset_samples(self, starting_sample, ending_sample, left_offsets, right_offsets, num_channels):
+    def _offset_samples(
+        self, starting_sample, ending_sample, left_offsets, right_offsets, num_channels
+    ):
         """
         Does the offset itself.
         """
-        left_slice = (0, slice(starting_sample + left_offsets[0],
-                               ending_sample + left_offsets[1]))
+        left_slice = (
+            0,
+            slice(starting_sample + left_offsets[0], ending_sample + left_offsets[1]),
+        )
         right_slice = left_slice
 
         if num_channels == 2:
-            right_slice = (1, slice(starting_sample + right_offsets[0],
-                                    ending_sample + right_offsets[1]))
+            right_slice = (
+                1,
+                slice(
+                    starting_sample + right_offsets[0], ending_sample + right_offsets[1]
+                ),
+            )
 
         left_channel = self.audio.raw_samples[left_slice]
         right_channel = self.audio.raw_samples[right_slice]
@@ -103,4 +115,3 @@ class TimingList(list):
         for (start, duration) in timings:
             time_slice = TimeSlice(start, duration, audio, unit=unit)
             self.append(time_slice)
-
