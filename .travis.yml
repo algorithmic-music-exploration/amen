@@ -31,11 +31,16 @@ install:
     # install your own package into the environment
     # pip install -e rather than setup.py, so that coverage can find the source
     - pip install -e ./
+    # We can get rid of these once we get rid of 2.7 and 3.5
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install black; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pip install black; fi
 
 script:
     - python --version
+    # We can get rid of these once we get rid of 2.7 and 3.5
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then black -S --check --verbose .; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then black -S --check --verbose .; fi
     - nosetests --with-coverage --cover-erase --cover-package=amen -v -w tests/
-    - 
 
 after_success:
     - coveralls
