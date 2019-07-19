@@ -6,7 +6,6 @@ iterate_feature.py : Iterate through the beats of a song, and keep some,
                      but not others, based on an audio feature.
 """
 
-import sys
 from amen.audio import Audio
 from amen.utils import example_audio_file
 from amen.synthesize import synthesize
