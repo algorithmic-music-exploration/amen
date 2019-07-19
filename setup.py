@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 
 import imp
-import os
 
 version = imp.load_source('amen.version', 'amen/version.py')
 setup(

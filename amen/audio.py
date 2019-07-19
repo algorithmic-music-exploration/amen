@@ -230,7 +230,7 @@ class Audio(object):
     def _get_timbre(self):
         """
         Gets timbre (MFCC) data, taking the first 20.
-        Note that the keys to the Feature are "mffc_<index>", 
+        Note that the keys to the Feature are "mffc_<index>",
         to avoid having a dict-like object with numeric keys.
 
         Parameters
