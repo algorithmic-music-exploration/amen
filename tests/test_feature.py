@@ -24,9 +24,11 @@ test_index = pd.to_timedelta(test_times, unit='s')
 test_dataframe = pd.DataFrame(data=audio.analysis_samples[:1000], index=test_index)
 test_feature = Feature(test_dataframe)
 
+
 def test_data_validation():
     with pytest.raises(AssertionError):
         f = Feature([1, 2, 3])
+
 
 def test_data():
     assert_frame_equal(test_feature.data, test_dataframe)

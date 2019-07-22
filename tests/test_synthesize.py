@@ -49,7 +49,7 @@ def test_format_inputs_generator():
 def test_synthesize_fails_if_too_long():
     time = pd.to_timedelta(21 * 60, unit='s')
     with pytest.raises(SynthesizeError):
-        res = (synthesize(([audio.timings['beats'][5]], [time])))
+        res = synthesize(([audio.timings['beats'][5]], [time]))
 
 
 stereo_audio = audio
@@ -61,6 +61,7 @@ def test_synthesize_returns_mono():
     synthesized_audio = synthesize(mono_audio.timings['beats'])
     assert isinstance(synthesized_audio, Audio)
 
+
 def test_synthesize_returns_stereo():
     synthesized_audio = synthesize(stereo_audio.timings['beats'])
     assert isinstance(synthesized_audio, Audio)
@@ -71,6 +72,7 @@ def test_synthesize_sample_output_mono():
     assert np.isclose(
         mono_audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]
     )
+
 
 def test_synthesize_sample_output_stereo():
     synthesized_audio = synthesize(stereo_audio.timings['beats'])

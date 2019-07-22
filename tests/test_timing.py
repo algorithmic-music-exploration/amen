@@ -46,6 +46,7 @@ def test_offset_samples_mono():
     )
     assert res.shape == (2, 3)
 
+
 def test_offset_samples_stereo():
     res = stereo_audio.timings['beats'][0]._offset_samples(
         1, 2, (-1, 1), (-1, 1), stereo_audio.num_channels
@@ -79,11 +80,15 @@ def test_get_samples_shape_both_stereo_and_mono():
 
         return samples, left_offset_length, right_offset_length
 
-    mono_samples, mono_left_offset_length, mono_right_offset_length = get_samples(mono_audio)
+    mono_samples, mono_left_offset_length, mono_right_offset_length = get_samples(
+        mono_audio
+    )
     assert len(mono_samples[0]) == mono_left_offset_length
     assert len(mono_samples[1]) == mono_right_offset_length
 
-    stereo_samples, stereo_left_offset_length, stereo_right_offset_length = get_samples(stereo_audio)
+    stereo_samples, stereo_left_offset_length, stereo_right_offset_length = get_samples(
+        stereo_audio
+    )
     assert len(stereo_samples[0]) == stereo_left_offset_length
     assert len(stereo_samples[1]) == stereo_right_offset_length
 
@@ -110,9 +115,8 @@ def test_get_samples_audio():
 
         return reset_samples, original_samples
 
-    mono_reset_samples, mono_original_samples =  get_samples_audio(mono_audio)
+    mono_reset_samples, mono_original_samples = get_samples_audio(mono_audio)
     assert np.array_equiv(mono_reset_samples, mono_original_samples)
 
-    stereo_reset_samples, stereo_original_samples =  get_samples_audio(stereo_audio)
+    stereo_reset_samples, stereo_original_samples = get_samples_audio(stereo_audio)
     assert np.array_equiv(stereo_reset_samples, stereo_original_samples)
-
