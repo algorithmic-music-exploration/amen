@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from nose.tools import assert_raises
 import six
 import pandas as pd
 import numpy as np
 import librosa
+import pytest
 from amen.audio import Audio
 from amen.utils import example_audio_file
 from amen.utils import example_mono_audio_file
@@ -48,7 +48,8 @@ def test_format_inputs_generator():
 
 def test_synthesize_fails_if_too_long():
     time = pd.to_timedelta(21 * 60, unit='s')
-    assert_raises(SynthesizeError, synthesize, ([audio.timings['beats'][5]], [time]))
+    with pytest.raises(SynthesizeError):
+        res = (synthesize(([audio.timings['beats'][5]], [time])))
 
 
 stereo_audio = audio
@@ -56,21 +57,23 @@ EXAMPLE_MONO_FILE = example_mono_audio_file()
 mono_audio = Audio(EXAMPLE_MONO_FILE)
 
 
-def test_synthesize_returns():
-    def __test():
-        synthesized_audio = synthesize(audio.timings['beats'])
-        assert isinstance(synthesized_audio, Audio)
+def test_synthesize_returns_mono():
+    synthesized_audio = synthesize(mono_audio.timings['beats'])
+    assert isinstance(synthesized_audio, Audio)
 
-    for audio in [mono_audio, stereo_audio]:
-        yield __test
+def test_synthesize_returns_stereo():
+    synthesized_audio = synthesize(stereo_audio.timings['beats'])
+    assert isinstance(synthesized_audio, Audio)
 
 
-def test_synthesize_sample_output():
-    def __test():
-        synthesized_audio = synthesize(audio.timings['beats'])
-        assert np.isclose(
-            audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]
-        )
+def test_synthesize_sample_output_mono():
+    synthesized_audio = synthesize(mono_audio.timings['beats'])
+    assert np.isclose(
+        mono_audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]
+    )
 
-    for audio in [mono_audio, stereo_audio]:
-        yield __test
+def test_synthesize_sample_output_stereo():
+    synthesized_audio = synthesize(stereo_audio.timings['beats'])
+    assert np.isclose(
+        stereo_audio.raw_samples[0][100], synthesized_audio.raw_samples[0][100]
+    )
