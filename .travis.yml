@@ -42,7 +42,7 @@ script:
     - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then black -S --check --verbose .; fi
     - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then black -S --check --verbose .; fi
     - flake8 --ignore E501,E203 --exclude=tests,docs,build
-    - pytest --cov=myproj tests/
+    - pytest --cov=amen tests/
 
 after_success:
     - coveralls
