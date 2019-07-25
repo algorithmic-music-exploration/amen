@@ -40,19 +40,22 @@ def test_get_offsets():
     assert left == (-1, 3)
 
 
-def test_offset_samples():
-    def __test():
-        res = audio.timings['beats'][0]._offset_samples(
-            1, 2, (-1, 1), (-1, 1), audio.num_channels
-        )
-        assert res.shape == (2, 3)
-
-    for audio in [mono_audio, stereo_audio]:
-        yield __test
+def test_offset_samples_mono():
+    res = mono_audio.timings['beats'][0]._offset_samples(
+        1, 2, (-1, 1), (-1, 1), mono_audio.num_channels
+    )
+    assert res.shape == (2, 3)
 
 
-def test_get_samples_shape():
-    def __test():
+def test_offset_samples_stereo():
+    res = stereo_audio.timings['beats'][0]._offset_samples(
+        1, 2, (-1, 1), (-1, 1), stereo_audio.num_channels
+    )
+    assert res.shape == (2, 3)
+
+
+def test_get_samples_shape_both_stereo_and_mono():
+    def get_samples(audio):
         beat = audio.timings['beats'][0]
 
         start = beat.time.delta * 1e-9
@@ -75,15 +78,23 @@ def test_get_samples_shape():
         left_offset_length = initial_length - left_offsets[0] + left_offsets[1]
         right_offset_length = initial_length - right_offsets[0] + right_offsets[1]
 
-        assert len(samples[0]) == left_offset_length
-        assert len(samples[1]) == right_offset_length
+        return samples, left_offset_length, right_offset_length
 
-    for audio in [mono_audio, stereo_audio]:
-        yield __test
+    mono_samples, mono_left_offset_length, mono_right_offset_length = get_samples(
+        mono_audio
+    )
+    assert len(mono_samples[0]) == mono_left_offset_length
+    assert len(mono_samples[1]) == mono_right_offset_length
+
+    stereo_samples, stereo_left_offset_length, stereo_right_offset_length = get_samples(
+        stereo_audio
+    )
+    assert len(stereo_samples[0]) == stereo_left_offset_length
+    assert len(stereo_samples[1]) == stereo_right_offset_length
 
 
 def test_get_samples_audio():
-    def __test():
+    def get_samples_audio(audio):
         beat = audio.timings['beats'][0]
         samples, left_offset, right_offset = beat.get_samples()
 
@@ -102,7 +113,10 @@ def test_get_samples_audio():
 
         original_samples = audio.raw_samples[0, starting_sample:ending_sample]
 
-        assert np.array_equiv(reset_samples, original_samples)
+        return reset_samples, original_samples
 
-    for audio in [mono_audio, stereo_audio]:
-        yield __test
+    mono_reset_samples, mono_original_samples = get_samples_audio(mono_audio)
+    assert np.array_equiv(mono_reset_samples, mono_original_samples)
+
+    stereo_reset_samples, stereo_original_samples = get_samples_audio(stereo_audio)
+    assert np.array_equiv(stereo_reset_samples, stereo_original_samples)

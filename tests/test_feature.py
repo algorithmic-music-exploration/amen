@@ -4,8 +4,8 @@
 import librosa
 import numpy as np
 import pandas as pd
+import pytest
 
-from nose.tools import assert_raises
 from pandas.util.testing import assert_frame_equal
 
 from amen.audio import Audio
@@ -24,10 +24,10 @@ test_index = pd.to_timedelta(test_times, unit='s')
 test_dataframe = pd.DataFrame(data=audio.analysis_samples[:1000], index=test_index)
 test_feature = Feature(test_dataframe)
 
-# Test init
+
 def test_data_validation():
-    # Makes sure that we can't pass lousy data.
-    assert_raises(AssertionError, Feature, [1, 2, 3])
+    with pytest.raises(AssertionError):
+        f = Feature([1, 2, 3])
 
 
 def test_data():
@@ -58,7 +58,8 @@ def test_base():
 
 
 def test_base_validation():
-    assert_raises(AssertionError, Feature, test_dataframe, np.mean, [1, 2, 3])
+    with pytest.raises(AssertionError):
+        f = Feature(test_dataframe, np.mean, [1, 2, 3])
 
 
 # Test list wrappers
@@ -124,10 +125,9 @@ def test_with_single_slice():
 # Test with_time
 def test_with_time_raises():
     def test():
-        for beat, feature in test_feature.with_time():
-            pass
-
-    assert_raises(FeatureError, test)
+        with pytest.raises(FeatureError):
+            for beat, feature in test_feature.with_time():
+                pass
 
 
 def test_with_time_beats():
@@ -198,10 +198,9 @@ def test_get_with_list():
 # Test with_time
 def test_feature_collection_with_time_raises():
     def test():
-        for beat, feature in feature_collection.with_time():
-            pass
-
-    assert_raises(FeatureError, test)
+        with pytest.raises(FeatureError):
+            for beat, feature in feature_collection.with_time():
+                pass
 
 
 def test_feature_collection_with_time_beats():
