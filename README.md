@@ -64,7 +64,7 @@ Amen owes a very large debt to Echo Nest Remix.  Contributors to that most estee
 * Tristan Jehan
 * Joshua Lifton
 * Adam Lindsay
-* Aaron Mandel
+* Alison Mandel
 * Nicola Montecchio
 * Rob Oschorn
 * Jason Sundram
